@@ -1,0 +1,144 @@
+{
+  "cats": [
+    {
+      "id": 1,
+      "name": "Jasper",
+      "dateOfBirth": "2024-02-28",
+      "sex": "Male",
+      "type": "kitten",
+      "colors": ["Black silver mackerel tabby"],
+      "details": "Chaton unique de Uraya",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Adopté"
+    },
+    {
+      "id": 2,
+      "name": "Misty",
+      "dateOfBirth": "2023-04-15",
+      "sex": "Female",
+      "type": "kitten",
+      "colors": ["Blue silver"],
+      "details": "Chaton joueur",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Disponible"
+    },
+    {
+      "id": 3,
+      "name": "Whiskers",
+      "dateOfBirth": "2023-06-20",
+      "sex": "Male",
+      "type": "kitten",
+      "colors": ["Brown tabby"],
+      "details": "Aime jouer avec des balles",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Réservé"
+    },
+    {
+      "id": 4,
+      "name": "Shadow",
+      "dateOfBirth": "2023-08-05",
+      "sex": "Female",
+      "type": "kitten",
+      "colors": ["Black"],
+      "details": "Très câline",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Adopté"
+    },
+    {
+      "id": 5,
+      "name": "Luna",
+      "dateOfBirth": "2023-01-15",
+      "sex": "Female",
+      "type": "kitten",
+      "colors": ["White"],
+      "details": "Très curieuse",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Disponible"
+    },
+    {
+      "id": 6,
+      "name": "Max",
+      "dateOfBirth": "2022-12-25",
+      "sex": "Male",
+      "type": "kitten",
+      "colors": ["Gray"],
+      "details": "Aime grimper aux arbres",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Réservé"
+    },
+    {
+      "id": 7,
+      "name": "Bella",
+      "dateOfBirth": "2022-11-11",
+      "sex": "Female",
+      "type": "breeder",
+      "colors": ["Blue"],
+      "details": "Maman très attentionnée",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Disponible"
+    },
+    {
+      "id": 8,
+      "name": "Oliver",
+      "dateOfBirth": "2022-10-10",
+      "sex": "Male",
+      "type": "breeder",
+      "colors": ["Orange"],
+      "details": "Papa très joueur",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Disponible"
+    },
+    {
+      "id": 9,
+      "name": "Simba",
+      "dateOfBirth": "2022-09-20",
+      "sex": "Male",
+      "type": "kitten",
+      "colors": ["Golden"],
+      "details": "Aime beaucoup dormir",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Adopté"
+    },
+    {
+      "id": 10,
+      "name": "Nala",
+      "dateOfBirth": "2022-08-30",
+      "sex": "Female",
+      "type": "kitten",
+      "colors": ["Cream"],
+      "details": "Très joueuse avec les autres chatons",
+      "pictures": [
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/jasper1",
+        "https://res.cloudinary.com/dfftkqyko/image/upload/f_auto,q_auto/v1/Jasper/Jasper2"
+      ],
+      "availability": "Réservé"
+    }
+  ]
+}
