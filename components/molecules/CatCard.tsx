@@ -1,82 +1,97 @@
-// components/molecules/CatCard.tsx
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material'
+import { Box, Card, CardActionArea, Typography, useMediaQuery, useTheme } from '@mui/material'
 import Image from 'next/image'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles({ name: 'CatCard' })(theme => ({
   cardRoot: {
     backgroundColor: '#5E5E5E',
-    width: '300px',
-    height: '60vh', // Use vh for responsive height
-    padding: '12px',
-    borderRadius: '30px',
-    position: 'relative',
+    borderRadius: 30,
+    padding: 12,
+    width: 300,
+    overflow: 'hidden',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.12)',
     [theme.breakpoints.down('sm')]: {
       width: 'calc(100vw - 60px)',
-      height: 'calc(100vw - 60px)', // Adjusted height for responsiveness
+      margin: '0 auto',
     },
   },
-  imageContainer: {
-    width: '100%',
-    height: '40vh', // Fixed height using vh
+
+  // wrapper global cliquable
+  actionArea: {
+    borderRadius: 30,
+  },
+
+  // Zone image : ratio stable (no % height)
+  imageFrame: {
     position: 'relative',
-    borderRadius: '30px 30px 0 0', // Rounded corners only at the top
+    width: '100%',
+    borderRadius: 22,
     overflow: 'hidden',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    aspectRatio: '4 / 5', // ✅ super stable mobile
   },
-  cardContentRoot: {
-    padding: '12px',
-    textAlign: 'center',
-    backgroundColor: '#5E5E5E',
-    borderRadius: '0 0 30px 30px',
+
+  // Footer réservé au texte (fixe)
+  footer: {
+    height: 64,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: 2,
+    paddingTop: 10,
   },
-  catImage: {
-    objectFit: 'cover',
+
+  name: {
+    color: 'white',
+    fontFamily: 'Great Vibes',
+    fontSize: 30,
+    lineHeight: 1,
+  },
+
+  sex: {
+    color: 'white',
+    opacity: 0.9,
+    fontFamily: 'Poppins',
+    fontSize: 14,
+    fontWeight: 500,
   },
 }))
 
-interface Props {
+type Props = {
   catName?: string
   catImage: string
   catSex?: string
   catLink?: string
 }
 
-const CatCard: React.FC<Props> = ({ catName, catImage, catSex, catLink }) => {
+const CatCard = ({ catName, catImage, catSex, catLink }: Props) => {
   const { classes } = useStyles()
   const theme = useTheme()
   const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
-    <Card className={classes.cardRoot} sx={{ width: isXs ? '85vw' : '300px', margin: 'auto' }}>
-      <CardActionArea href={catLink ?? '#'}>
-        <Box className={classes.imageContainer}>
+    <Card className={classes.cardRoot}>
+      <CardActionArea
+        href={catLink ?? '#'}
+        className={classes.actionArea}
+        sx={{ borderRadius: '30px' }}
+      >
+        <Box className={classes.imageFrame}>
           <Image
             src={catImage}
-            alt={`Image of ${catName}`}
+            alt={catName ? `Photo de ${catName}` : 'Photo du chat'}
             fill
-            className={classes.catImage}
-            sizes="(max-width: 600px) 100vw, 50vw"
+            sizes={isXs ? 'calc(100vw - 60px)' : '300px'}
             style={{ objectFit: 'cover' }}
+            priority={isXs} // optionnel (LCP mobile)
           />
         </Box>
-        <CardContent classes={{ root: classes.cardContentRoot }}>
-          <Typography sx={{ color: 'white', fontFamily: 'Great Vibes', fontSize: '20px' }}>
-            {catName ?? 'Bob'}
-          </Typography>
-          {catSex && (
-            <Typography sx={{ color: 'white', fontFamily: 'Great Vibes', fontSize: '16px' }}>
-              {catSex}
-            </Typography>
-          )}
-        </CardContent>
+
+        <Box className={classes.footer}>
+          <Typography className={classes.name}>{catName ?? 'Sans nom'}</Typography>
+          {!!catSex && <Typography className={classes.sex}>{catSex}</Typography>}
+        </Box>
       </CardActionArea>
     </Card>
   )

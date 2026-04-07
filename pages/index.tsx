@@ -35,15 +35,16 @@ const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedC
 
       {/* Section Reproducteurs vedettes */}
       <Box my={4}>
-        <Typography variant="h4" gutterBottom>
+        <Typography variant="h4" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
           Nos Reproducteurs Vedettes
         </Typography>
+
         <Grid container spacing={4}>
           {featuredBreeders.map(breeder => (
             <Grid item xs={12} sm={6} key={breeder.id}>
               <CatCard
                 catName={breeder.name}
-                catImage={breeder.pictures[0] ?? ''}
+                catImage={breeder.pictures?.[0] ?? ''}
                 catSex={breeder.sex}
                 catLink={`/chats/${breeder.name.toLowerCase().replace(/\s+/g, '-')}`}
               />

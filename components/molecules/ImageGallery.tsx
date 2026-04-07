@@ -12,7 +12,7 @@ const ImageGallery: React.FC<{ pictures: { link?: string }[] }> = ({ pictures })
   if (!pictures || pictures.length === 0) {
     return (
       <Typography variant="body2" sx={{ textAlign: 'center' }}>
-        Pas d'images disponibles.
+        Pas d&rsquo;images disponibles.
       </Typography>
     )
   }

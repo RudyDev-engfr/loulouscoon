@@ -4,22 +4,30 @@ import { Box, Typography, Button } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
 
+type CatType = 'kitten' | 'breeder'
+type CatAvailability = 'Disponible' | 'Réservé' | 'Adopté'
 interface Cat {
-  id: number
+  id: string // 👈 important
   name?: string | null
   dateOfBirth?: string | null
   sex?: 'Male' | 'Female' | null
+
+  type?: CatType | null // 👈 ajout
+  availability?: CatAvailability | null // 👈 ajout
+
   vaccines?:
     | {
         vaccineName?: string | null
         dateGiven?: string | null
       }[]
     | null
+
   chip?: {
     number?: string | null
     dateInserted?: string | null
   } | null
-  colors?: string[] | null
+
+  colors?: string[] | string | null // 👈 car Bob est en string
   details?: string | null
   pictures?: string[] | null
 }
@@ -164,14 +172,16 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
                 </Box>
               </>
             ) : (
-              <Typography variant="subtitle1">Pas d'images disponibles.</Typography>
+              <Typography variant="subtitle1">Pas d&rsquo;images disponibles.</Typography>
             )}
           </Box>
-          <Box marginTop={2}>
-            <Button variant="contained" color="primary">
-              Adopte moi
-            </Button>
-          </Box>
+          {cat.availability === 'Disponible' && cat.type === 'kitten' && (
+            <Box mt={2}>
+              <Button variant="contained" color="primary">
+                Adopte moi
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

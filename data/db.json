@@ -1,0 +1,32 @@
+{
+  "cats": [
+    {
+      "id": "2",
+      "name": "Casper",
+      "sex": "Male",
+      "type": "breeder",
+      "colors": [
+        "Blue Tabby"
+      ],
+      "details": "Un mâle puissant et affectueux.",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/f_auto,q_auto/440074337_870759418409643_214635917323527009_n_gaytql"
+      ],
+      "availability": "Disponible",
+      "dateOfBirth": "2029-01-30"
+    },
+    {
+      "id": "5c4d",
+      "name": "George",
+      "dateOfBirth": "2026-03-23",
+      "sex": "Female",
+      "type": "kitten",
+      "colors": [
+        "Blanc"
+      ],
+      "details": "OK",
+      "pictures": [],
+      "availability": "Disponible"
+    }
+  ]
+}

@@ -1,8 +1,21 @@
-// pages/ajout-chat.tsx
 import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import CatForm from '@/components/molecules/CatForm'
+import AdminCatsList from '@/components/molecules/AdminCatsList'
 import { Box, Typography, Container, Paper, TextField, Button } from '@mui/material'
+import { isAdminAuthenticated } from '@/lib/adminAuth'
+
+interface Cat {
+  id: string
+  name: string
+  dateOfBirth: string
+  sex: 'Male' | 'Female'
+  type: 'kitten' | 'breeder'
+  colors: string[]
+  details: string
+  pictures: string[]
+  availability: 'Disponible' | 'Réservé' | 'Adopté'
+}
 
 interface AjoutChatPageProps {
   authenticated: boolean
@@ -10,38 +23,99 @@ interface AjoutChatPageProps {
 
 const AjoutChatPage: React.FC<AjoutChatPageProps> = ({ authenticated }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(authenticated)
+  const [loading, setLoading] = useState(false)
+  const [editingCat, setEditingCat] = useState<Cat | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const username = (document.getElementById('username') as HTMLInputElement).value
-    const password = (document.getElementById('password') as HTMLInputElement).value
+    setLoading(true)
 
-    const response = await fetch('/api/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    })
+    const formData = new FormData(e.currentTarget)
+    const username = String(formData.get('username') || '')
+    const password = String(formData.get('password') || '')
 
-    if (response.ok) {
-      setIsAuthenticated(true)
-    } else {
-      alert('Identifiants incorrects !')
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(true)
+        window.location.reload()
+      } else {
+        alert('Identifiants incorrects !')
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Une erreur est survenue pendant la connexion.')
+    } finally {
+      setLoading(false)
     }
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(false)
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Une erreur est survenue pendant la déconnexion.')
+    }
+  }
+
+  const handleFormSuccess = () => {
+    setEditingCat(null)
+    setRefreshKey(prev => prev + 1)
   }
 
   return (
     <Container>
       <Box my={4}>
         {isAuthenticated ? (
-          <CatForm />
+          <>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+              <Typography variant="h5">Administration des chats</Typography>
+              <Button variant="outlined" color="secondary" onClick={handleLogout}>
+                Se déconnecter
+              </Button>
+            </Box>
+
+            <Box mb={4}>
+              <Typography variant="h6" mb={2}>
+                {editingCat ? `Modifier ${editingCat.name}` : 'Ajouter un chat'}
+              </Typography>
+
+              <CatForm initialData={editingCat} onSuccess={handleFormSuccess} />
+
+              {editingCat && (
+                <Box mt={2}>
+                  <Button variant="text" onClick={() => setEditingCat(null)}>
+                    Annuler la modification
+                  </Button>
+                </Box>
+              )}
+            </Box>
+
+            <AdminCatsList onEdit={setEditingCat} refreshKey={refreshKey} />
+          </>
         ) : (
           <Paper elevation={3} sx={{ padding: 4 }}>
             <form onSubmit={handleAuth}>
               <Typography variant="h6" gutterBottom>
                 Authentification requise
               </Typography>
+
               <TextField
                 fullWidth
                 margin="normal"
@@ -51,6 +125,7 @@ const AjoutChatPage: React.FC<AjoutChatPageProps> = ({ authenticated }) => {
                 variant="outlined"
                 required
               />
+
               <TextField
                 fullWidth
                 margin="normal"
@@ -61,14 +136,16 @@ const AjoutChatPage: React.FC<AjoutChatPageProps> = ({ authenticated }) => {
                 variant="outlined"
                 required
               />
+
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
+                disabled={loading}
                 sx={{ marginTop: 2 }}
               >
-                Se connecter
+                {loading ? 'Connexion...' : 'Se connecter'}
               </Button>
             </form>
           </Paper>
@@ -81,11 +158,7 @@ const AjoutChatPage: React.FC<AjoutChatPageProps> = ({ authenticated }) => {
 export default AjoutChatPage
 
 export const getServerSideProps: GetServerSideProps = async context => {
-  const { req } = context
-  const { username, password } = req.cookies || {}
-
-  const authenticated =
-    username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD
+  const authenticated = isAdminAuthenticated(context.req)
 
   return {
     props: {
