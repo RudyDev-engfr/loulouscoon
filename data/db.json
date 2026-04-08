@@ -27,6 +27,22 @@
       "details": "OK",
       "pictures": [],
       "availability": "Disponible"
+    },
+    {
+      "id": "c5feecbf-249b-408f-8758-2d403b92db7c",
+      "name": "Zig",
+      "slug": "zig",
+      "dateOfBirth": "2022-02-22",
+      "sex": "Male",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Blanc"
+      ],
+      "details": "tache",
+      "pictures": []
     }
   ]
 }

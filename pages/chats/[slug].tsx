@@ -1,33 +1,32 @@
-// pages/[slug].tsx
 import { GetStaticProps, GetStaticPaths } from 'next'
 import { Box, Typography, Button } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
+import fs from 'fs'
+import path from 'path'
 
 type CatType = 'kitten' | 'breeder'
 type CatAvailability = 'Disponible' | 'Réservé' | 'Adopté'
+
 interface Cat {
-  id: string // 👈 important
+  id: string
   name?: string | null
+  slug?: string | null
   dateOfBirth?: string | null
   sex?: 'Male' | 'Female' | null
-
-  type?: CatType | null // 👈 ajout
-  availability?: CatAvailability | null // 👈 ajout
-
+  type?: CatType | null
+  availability?: CatAvailability | null
   vaccines?:
     | {
         vaccineName?: string | null
         dateGiven?: string | null
       }[]
     | null
-
   chip?: {
     number?: string | null
     dateInserted?: string | null
   } | null
-
-  colors?: string[] | string | null // 👈 car Bob est en string
+  colors?: string[] | string | null
   details?: string | null
   pictures?: string[] | null
 }
@@ -36,13 +35,42 @@ interface CatProps {
   cat: Cat
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const response = await fetch('http://localhost:4000/cats')
-  const cats = await response.json()
+interface Database {
+  cats: Cat[]
+}
 
-  const paths = cats.map((cat: Cat) => ({
-    params: { slug: cat.name?.toLowerCase().replace(/\s+/g, '-') },
-  }))
+const getDbPath = () => path.join(process.cwd(), 'data', 'db.json')
+
+const getAllCats = (): Cat[] => {
+  const filePath = getDbPath()
+  const fileContent = fs.readFileSync(filePath, 'utf-8')
+  const db: Database = JSON.parse(fileContent)
+  return Array.isArray(db.cats) ? db.cats : []
+}
+
+const slugify = (value: string): string => {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+const getCatSlug = (cat: Cat): string => {
+  if (cat.slug) return cat.slug
+  return slugify(cat.name || '')
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const cats = getAllCats()
+
+  const paths = cats
+    .filter(cat => cat.name)
+    .map(cat => ({
+      params: { slug: getCatSlug(cat) },
+    }))
 
   return {
     paths,
@@ -52,10 +80,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async context => {
   const { slug } = context.params as { slug: string }
-  const response = await fetch(`http://localhost:4000/cats`)
-  const cats = await response.json()
+  const cats = getAllCats()
 
-  const cat = cats.find((cat: Cat) => cat.name?.toLowerCase() === slug.toLowerCase())
+  const cat = cats.find(cat => getCatSlug(cat).toLowerCase() === slug.toLowerCase()) || null
 
   if (!cat) {
     return {
@@ -98,6 +125,8 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
 
   const age = calculateAge(cat.dateOfBirth)
 
+  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(', ') : cat.colors || ''
+
   return (
     <Box sx={{ width: '100vw', padding: '30px' }}>
       <Box sx={{ paddingTop: '50px' }}>
@@ -105,16 +134,21 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
           <Typography variant="h5" gutterBottom>
             {cat.name}
           </Typography>
+
           <Typography variant="subtitle1">Sexe: {cat.sex}</Typography>
+
           <Typography variant="subtitle1">
             Date de naissance: {formatDate(cat.dateOfBirth ?? '')} {age !== null && `(${age} ans)`}
           </Typography>
-          <Typography variant="subtitle1">Couleurs: {cat.colors}</Typography>
+
+          <Typography variant="subtitle1">Couleurs: {displayColors}</Typography>
+
           {cat.details && (
             <Typography variant="body1" marginTop={2}>
               {cat.details}
             </Typography>
           )}
+
           {cat.vaccines && (
             <Box marginTop={2}>
               <Typography variant="h6">Vaccins</Typography>
@@ -125,6 +159,7 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
               ))}
             </Box>
           )}
+
           <Box
             sx={{
               width: 'calc(100vw - 60px)',
@@ -145,6 +180,7 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
                     style={{ borderRadius: '10px' }}
                   />
                 </Box>
+
                 <Box display="flex" justifyContent="center" marginTop={2} gap={1}>
                   {cat.pictures.slice(0, 5).map((picture, index) => (
                     <Box
@@ -175,6 +211,7 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
               <Typography variant="subtitle1">Pas d&rsquo;images disponibles.</Typography>
             )}
           </Box>
+
           {cat.availability === 'Disponible' && cat.type === 'kitten' && (
             <Box mt={2}>
               <Button variant="contained" color="primary">

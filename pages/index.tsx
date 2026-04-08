@@ -1,17 +1,10 @@
-// pages/index.tsx
-import { GetStaticProps } from 'next'
+import type { GetStaticProps } from 'next'
+import type { Cat } from '../lib/cat'
 import { Box, Container, Grid, Typography } from '@mui/material'
 import CatCard from '@/components/molecules/CatCard'
 import PetsIcon from '@mui/icons-material/Pets'
-
-interface Cat {
-  id: number
-  name: string
-  dateOfBirth: string
-  sex: 'Male' | 'Female'
-  pictures: string[]
-  availability: 'Disponible' | 'Réservé' | 'Adopté'
-}
+import { getKittens, getBreeders, countAdoptedCats } from '../lib/cat.server'
+import { getCatSlug } from '../lib/cat'
 
 interface HomePageProps {
   kittens: Cat[]
@@ -19,10 +12,9 @@ interface HomePageProps {
   adoptedCount: number
 }
 
-const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedCount }) => {
+const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) => {
   return (
     <Container>
-      {/* Section Nombre de chatons adoptés */}
       <Box my={4} textAlign="center">
         <PetsIcon sx={{ fontSize: 40, color: '#f50057' }} />
         <Typography variant="h6" gutterBottom>
@@ -33,7 +25,6 @@ const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedC
         </Typography>
       </Box>
 
-      {/* Section Reproducteurs vedettes */}
       <Box my={4}>
         <Typography variant="h4" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
           Nos Reproducteurs Vedettes
@@ -46,14 +37,13 @@ const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedC
                 catName={breeder.name}
                 catImage={breeder.pictures?.[0] ?? ''}
                 catSex={breeder.sex}
-                catLink={`/chats/${breeder.name.toLowerCase().replace(/\s+/g, '-')}`}
+                catLink={`/chats/${getCatSlug(breeder)}`}
               />
             </Grid>
           ))}
         </Grid>
       </Box>
 
-      {/* Section Derniers chatons en date */}
       <Box my={4}>
         <Typography variant="h4" gutterBottom>
           Derniers Chatons en Date
@@ -63,9 +53,9 @@ const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedC
             <Grid item xs={12} sm={6} md={4} key={kitten.id}>
               <CatCard
                 catName={kitten.name}
-                catImage={kitten.pictures[0] ?? ''}
+                catImage={kitten.pictures?.[0] ?? ''}
                 catSex={kitten.sex}
-                catLink={`/chats/${kitten.name.toLowerCase().replace(/\s+/g, '-')}`}
+                catLink={`/chats/${getCatSlug(kitten)}`}
               />
             </Grid>
           ))}
@@ -75,22 +65,13 @@ const HomePage: React.FC<HomePageProps> = ({ kittens, featuredBreeders, adoptedC
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
-    const kittensResponse = await fetch('http://localhost:4000/cats?type=kitten')
-    const breedersResponse = await fetch('http://localhost:4000/cats?type=breeder')
-    const adoptedCountResponse = await fetch('http://localhost:3000/api/countAdoptedCats')
+    const kittens = await getKittens()
+    const breeders = await getBreeders()
+    const adoptedCount = await countAdoptedCats()
 
-    const kittens = await kittensResponse.json()
-    const breeders = await breedersResponse.json()
-    const { adoptedCount } = await adoptedCountResponse.json()
-
-    console.log('Kittens:', kittens)
-    console.log('Breeders:', breeders)
-    console.log('Adopted count:', adoptedCount)
-
-    // Sélectionnez les reproducteurs vedettes (maman et papa vedettes)
-    const featuredBreeders = breeders.slice(0, 2) // Vous pouvez changer la logique de sélection
+    const featuredBreeders = breeders.slice(0, 2)
 
     return {
       props: {
@@ -101,11 +82,12 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   } catch (error) {
     console.error('Error in getStaticProps:', error)
+
     return {
       props: {
         kittens: [],
         featuredBreeders: [],
-        adoptedCount: 61, // Valeur par défaut en cas d'erreur
+        adoptedCount: 61,
       },
     }
   }

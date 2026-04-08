@@ -78,14 +78,16 @@ const CatCard = ({ catName, catImage, catSex, catLink }: Props) => {
         sx={{ borderRadius: '30px' }}
       >
         <Box className={classes.imageFrame}>
-          <Image
-            src={catImage}
-            alt={catName ? `Photo de ${catName}` : 'Photo du chat'}
-            fill
-            sizes={isXs ? 'calc(100vw - 60px)' : '300px'}
-            style={{ objectFit: 'cover' }}
-            priority={isXs} // optionnel (LCP mobile)
-          />
+          {catImage && (
+            <Image
+              src={catImage}
+              alt={catName ? `Photo de ${catName}` : 'Photo du chat'}
+              fill
+              sizes={isXs ? 'calc(100vw - 60px)' : '300px'}
+              style={{ objectFit: 'cover' }}
+              priority={isXs} // optionnel (LCP mobile)
+            />
+          )}
         </Box>
 
         <Box className={classes.footer}>

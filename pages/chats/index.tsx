@@ -1,5 +1,6 @@
-import { GetServerSideProps } from 'next'
+import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import type { ReactNode } from 'react'
 import {
   Box,
   Button,
@@ -13,18 +14,8 @@ import {
   CardMedia,
   Stack,
 } from '@mui/material'
-
-interface Cat {
-  id: string
-  name: string
-  dateOfBirth?: string
-  sex: 'Male' | 'Female'
-  type: 'kitten' | 'breeder'
-  colors?: string[]
-  details?: string
-  pictures: string[]
-  availability?: string
-}
+import { getCatSlug, type Cat } from '../../lib/cat'
+import { getBreeders, getKittens } from '../../lib/cat.server'
 
 interface CatsPageProps {
   breeders: Cat[]
@@ -37,8 +28,9 @@ const sexLabel = (sex: Cat['sex']) => {
 }
 
 function CatCard({ cat }: { cat: Cat }) {
-  const slug = cat.name.toLowerCase().replace(/\s+/g, '-')
+  const slug = getCatSlug(cat)
   const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
+  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
 
   return (
     <Card
@@ -74,9 +66,9 @@ function CatCard({ cat }: { cat: Cat }) {
             <Chip label={sexLabel(cat.sex)} size="small" />
           </Stack>
 
-          {cat.colors && cat.colors.length > 0 && (
+          {displayColors && (
             <Typography variant="body2" color="text.secondary" mb={1}>
-              {cat.colors.join(' • ')}
+              {displayColors}
             </Typography>
           )}
 
@@ -112,7 +104,7 @@ function CatCard({ cat }: { cat: Cat }) {
   )
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <Typography
       variant="h4"
@@ -167,15 +159,15 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
 
         <Box>
           <SectionTitle>Nos Chatons</SectionTitle>
-          <Grid container spacing={4}>
-            {kittens.map(cat => (
-              <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                <CatCard cat={cat} />
-              </Grid>
-            ))}
-          </Grid>
-
-          {kittens.length === 0 && (
+          {kittens.length > 0 ? (
+            <Grid container spacing={4}>
+              {kittens.map(cat => (
+                <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                  <CatCard cat={cat} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
             <Box sx={{ textAlign: 'center', py: 6 }}>
               <Typography variant="body1" color="text.secondary" mb={2}>
                 Aucun chaton n’est affiché pour le moment.
@@ -193,11 +185,8 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
 
 export const getServerSideProps: GetServerSideProps<CatsPageProps> = async () => {
   try {
-    const response = await fetch('http://localhost:4000/cats')
-    const cats: Cat[] = await response.json()
-
-    const breeders = cats.filter(cat => cat.type === 'breeder')
-    const kittens = cats.filter(cat => cat.type === 'kitten')
+    const breeders = await getBreeders()
+    const kittens = await getKittens()
 
     return {
       props: {
