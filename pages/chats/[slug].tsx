@@ -7,33 +7,10 @@ import Image from 'next/image'
 import { useState } from 'react'
 import fs from 'fs'
 import path from 'path'
-import { getCatSlug } from '@/lib/cat'
+import { getCatSlug, Cat } from '@/lib/cat'
 
 type CatType = 'kitten' | 'breeder'
 type CatAvailability = 'Disponible' | 'Réservé' | 'Adopté'
-
-interface Cat {
-  id: string
-  name?: string | null
-  slug?: string | null
-  dateOfBirth?: string | null
-  sex?: 'Male' | 'Female' | null
-  type?: CatType | null
-  availability?: CatAvailability | null
-  vaccines?:
-    | {
-        vaccineName?: string | null
-        dateGiven?: string | null
-      }[]
-    | null
-  chip?: {
-    number?: string | null
-    dateInserted?: string | null
-  } | null
-  colors?: string[] | string | null
-  details?: string | null
-  pictures?: string[] | null
-}
 
 interface CatProps {
   cat: Cat
@@ -263,20 +240,6 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
               <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
                 {cat.details}
               </Typography>
-            )}
-
-            {cat.vaccines && cat.vaccines.length > 0 && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Vaccins
-                </Typography>
-
-                {cat.vaccines.map((vaccine, index) => (
-                  <Typography key={index} variant="body1" sx={{ mb: 0.5 }}>
-                    {vaccine.vaccineName} - {formatDate(vaccine.dateGiven ?? '')}
-                  </Typography>
-                ))}
-              </Box>
             )}
 
             {cat.availability === 'Disponible' && cat.type === 'kitten' && (
