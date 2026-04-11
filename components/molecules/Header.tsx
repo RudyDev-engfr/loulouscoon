@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import {
   AppBar,
   Box,
@@ -18,8 +17,8 @@ import { useTheme } from '@mui/material/styles'
 
 const navItems = [
   { label: 'Accueil', href: '/' },
-  { label: 'Nos chats', href: '/chats' },
-  { label: 'À propos', href: '/a-propos' },
+  { label: 'Nos reproducteurs', href: '/chats' },
+  { label: 'Nos chatons', href: '/chatons' },
   { label: 'Contact', href: '/contact' },
 ]
 
@@ -153,7 +152,6 @@ export default function Header() {
         </Box>
       </Drawer>
 
-      {/* espace pour compenser le header fixe */}
       <Toolbar sx={{ minHeight: { xs: 72, md: 88 } }} />
     </>
   )

@@ -1,14 +1,27 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import type { Cat } from './cat'
+import type { Cat, Litter, LitterWithKittens } from './cat'
 import { getCatSlug } from './cat'
 
 const dataFilePath = path.join(process.cwd(), 'data', 'db.json')
+interface Database {
+  cats: Cat[]
+  litters: Litter[]
+}
 
-async function readCatsFile(): Promise<Cat[]> {
+async function readDatabase(): Promise<Database> {
   const raw = await fs.readFile(dataFilePath, 'utf8')
   const data = JSON.parse(raw)
-  return data.cats ?? []
+
+  return {
+    cats: data.cats ?? [],
+    litters: data.litters ?? [],
+  }
+}
+
+async function readCatsFile(): Promise<Cat[]> {
+  const data = await readDatabase()
+  return data.cats
 }
 
 export async function getCats(): Promise<Cat[]> {
@@ -42,4 +55,25 @@ export async function countAdoptedCats(): Promise<number> {
   const cats = await readCatsFile()
 
   return cats.filter(cat => normalizeAvailability(cat.availability) === 'adopte').length
+}
+
+export async function getLitterGroups(): Promise<LitterWithKittens[]> {
+  const { cats, litters } = await readDatabase()
+
+  return litters
+    .map(litter => {
+      const father = cats.find(cat => cat.id === litter.fatherId)
+      const mother = cats.find(cat => cat.id === litter.motherId)
+      const kittens = cats.filter(cat => cat.type === 'kitten' && cat.litterId === litter.id)
+
+      return {
+        id: litter.id,
+        title: litter.title,
+        birthDate: litter.birthDate,
+        father,
+        mother,
+        kittens,
+      }
+    })
+    .filter(litter => litter.kittens.length > 0)
 }

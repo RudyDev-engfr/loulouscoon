@@ -132,9 +132,8 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
               mb: 2,
             }}
           >
-            Nos Chats
+            Nos reproducteurs
           </Typography>
-
           <Typography
             variant="body1"
             color="text.secondary"

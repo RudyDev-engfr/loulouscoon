@@ -29,20 +29,27 @@
       "availability": "Disponible"
     },
     {
-      "id": "c5feecbf-249b-408f-8758-2d403b92db7c",
-      "name": "Zig",
-      "slug": "zig",
-      "dateOfBirth": "2022-02-22",
+      "id": "a0d2ceee-2a2f-4a8b-b92d-e0fbbc086767",
+      "name": "Unico",
+      "slug": "unico",
+      "dateOfBirth": "2023-03-24",
       "sex": "Male",
-      "type": "kitten",
+      "type": "breeder",
       "availability": "Disponible",
       "vaccines": [],
       "chip": null,
       "colors": [
-        "Blanc"
+        "Black Silver Shaded"
       ],
-      "details": "tache",
-      "pictures": []
+      "details": "Reproducteur Mâle",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775897619/unico_tpia0w.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/Ligne%CC%81e_Unico_img_onm1lo.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_1_4_img_alrd18.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_2_4_img_zobfg2.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_3_4_img_hig1me.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_4_4_img_t1bfpq.jpg"
+      ]
     }
   ]
 }

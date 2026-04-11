@@ -30,8 +30,8 @@ const ImageGallery: React.FC<{ pictures: { link?: string }[] }> = ({ pictures })
         <Image
           src={pictures[activeImageIndex]?.link ?? ''}
           alt="Image principale du chat"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
         />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -49,9 +49,11 @@ const ImageGallery: React.FC<{ pictures: { link?: string }[] }> = ({ pictures })
             <Image
               src={picture?.link ?? ''}
               alt={`Miniature ${index + 1} du chat`}
-              layout="fill"
-              objectFit="cover"
-              style={{ border: index === activeImageIndex ? '2px solid blue' : 'none' }}
+              fill
+              style={{
+                border: index === activeImageIndex ? '2px solid blue' : 'none',
+                objectFit: 'cover',
+              }}
             />
           </Box>
         ))}
