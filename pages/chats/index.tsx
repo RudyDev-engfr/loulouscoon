@@ -3,7 +3,6 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import {
   Box,
-  Button,
   Chip,
   Container,
   Grid,
@@ -15,11 +14,10 @@ import {
   Stack,
 } from '@mui/material'
 import { getCatSlug, type Cat } from '../../lib/cat'
-import { getBreeders, getKittens } from '../../lib/cat.server'
+import { getBreeders } from '../../lib/cat.server'
 
 interface CatsPageProps {
   breeders: Cat[]
-  kittens: Cat[]
 }
 
 const sexLabel = (sex: Cat['sex']) => {
@@ -72,18 +70,6 @@ function CatCard({ cat }: { cat: Cat }) {
             </Typography>
           )}
 
-          {cat.availability && (
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1.5,
-                fontWeight: 600,
-              }}
-            >
-              {cat.availability}
-            </Typography>
-          )}
-
           {cat.details && (
             <Typography
               variant="body2"
@@ -119,7 +105,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
   )
 }
 
-export default function CatsPage({ breeders, kittens }: CatsPageProps) {
+export default function CatsPage({ breeders }: CatsPageProps) {
   return (
     <Box sx={{ py: { xs: 5, md: 8 } }}>
       <Container maxWidth="lg">
@@ -139,9 +125,8 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
             color="text.secondary"
             sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
           >
-            Découvrez nos reproducteurs et les chatons actuellement présentés à l’élevage. Chaque
-            fiche permet d’en apprendre davantage sur leur caractère, leurs couleurs et leur
-            disponibilité.
+            Découvrez nos reproducteurs, leur caractère, leurs couleurs et leur univers au sein de
+            l’élevage.
           </Typography>
         </Box>
 
@@ -155,28 +140,6 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
             ))}
           </Grid>
         </Box>
-
-        <Box>
-          <SectionTitle>Nos Chatons</SectionTitle>
-          {kittens.length > 0 ? (
-            <Grid container spacing={4}>
-              {kittens.map(cat => (
-                <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                  <CatCard cat={cat} />
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Box sx={{ textAlign: 'center', py: 6 }}>
-              <Typography variant="body1" color="text.secondary" mb={2}>
-                Aucun chaton n’est affiché pour le moment.
-              </Typography>
-              <Button component={Link} href="/contact" variant="contained" size="large">
-                Nous contacter
-              </Button>
-            </Box>
-          )}
-        </Box>
       </Container>
     </Box>
   )
@@ -185,21 +148,18 @@ export default function CatsPage({ breeders, kittens }: CatsPageProps) {
 export const getServerSideProps: GetServerSideProps<CatsPageProps> = async () => {
   try {
     const breeders = await getBreeders()
-    const kittens = await getKittens()
 
     return {
       props: {
         breeders,
-        kittens,
       },
     }
   } catch (error) {
-    console.error('Erreur lors de la récupération des chats :', error)
+    console.error('Erreur lors de la récupération des reproducteurs :', error)
 
     return {
       props: {
         breeders: [],
-        kittens: [],
       },
     }
   }

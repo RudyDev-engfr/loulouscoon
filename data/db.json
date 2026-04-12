@@ -1,34 +1,6 @@
 {
   "cats": [
     {
-      "id": "2",
-      "name": "Casper",
-      "sex": "Male",
-      "type": "breeder",
-      "colors": [
-        "Blue Tabby"
-      ],
-      "details": "Un mâle puissant et affectueux.",
-      "pictures": [
-        "https://res.cloudinary.com/djp6audpi/image/upload/f_auto,q_auto/440074337_870759418409643_214635917323527009_n_gaytql"
-      ],
-      "availability": "Disponible",
-      "dateOfBirth": "2029-01-30"
-    },
-    {
-      "id": "5c4d",
-      "name": "George",
-      "dateOfBirth": "2026-03-23",
-      "sex": "Female",
-      "type": "kitten",
-      "colors": [
-        "Blanc"
-      ],
-      "details": "OK",
-      "pictures": [],
-      "availability": "Disponible"
-    },
-    {
       "id": "a0d2ceee-2a2f-4a8b-b92d-e0fbbc086767",
       "name": "Unico",
       "slug": "unico",
@@ -49,6 +21,122 @@
         "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_2_4_img_zobfg2.jpg",
         "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_3_4_img_hig1me.jpg",
         "https://res.cloudinary.com/djp6audpi/image/upload/v1775898892/test_adn_unico_4_4_img_t1bfpq.jpg"
+      ]
+    },
+    {
+      "id": "5b5ebf61-47e5-4797-85bf-b1b3c7513cd4",
+      "name": "Umy",
+      "slug": "umy",
+      "dateOfBirth": "2023-05-10",
+      "sex": "Female",
+      "type": "breeder",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke Tortie",
+        "Blanche"
+      ],
+      "details": "Reproductrice femelle",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991783/umy_dsnepx.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991784/Umy-2_jb2bkg.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991783/Ligne%CC%81e_Umy_img_dqxpof.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991784/1_4_test_ge%CC%81ne%CC%81tique_Umy_img_jv8bob.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991782/2_4_test_ge%CC%81ne%CC%81tique_Umy_img_gkkeio.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991784/3_4_test_ge%CC%81ne%CC%81tique_Umy_img_k6fjug.jpg",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775991783/4_4_test_ge%CC%81ne%CC%81tique_Umy_img_mjkstv.jpg"
+      ]
+    },
+    {
+      "id": "59919f74-b5dd-45f9-aaa1-52c3a5493c4a",
+      "name": "Basil",
+      "slug": "basil",
+      "dateOfBirth": "2026-04-05",
+      "sex": "Male",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke et Blanc"
+      ],
+      "details": "Né de la portée Umy x Unico.\nPrix : 1400€\n\nLe chaton partira pucé, vacciné, vermifugé et traité contre les parasites internes et externes.\nVous aurez également : \n· Son carnet de santé\n· Un kit chaton\n· Une assurance santé vétérinaire offerte pendant 60 jours\n· Un bon de réduction Royal Canin\n\nIl sera également inscrit au LOOF, et son pedigree vous sera envoyé dès réception à l’élevage.",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775992074/Basil_UmyXUnico_tqdepo.jpg"
+      ]
+    },
+    {
+      "id": "8ae00db5-16d5-4cbe-96d6-89ab803cc32e",
+      "name": "Boy",
+      "slug": "boy",
+      "dateOfBirth": "2026-04-05",
+      "sex": "Male",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke et Blanc"
+      ],
+      "details": "Né de la portée Umy x Unico.\nPrix : 1400€\n\nLe chaton partira pucé, vacciné, vermifugé et traité contre les parasites internes et externes.\nVous aurez également : \n· Son carnet de santé\n· Un kit chaton\n· Une assurance santé vétérinaire offerte pendant 60 jours\n· Un bon de réduction Royal Canin\n\nIl sera également inscrit au LOOF, et son pedigree vous sera envoyé dès réception à l’élevage.\n",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775993901/Boy_UmyXUnico_ldbbco.jpg"
+      ]
+    },
+    {
+      "id": "d88804ab-2ea3-4fec-a018-67ff0d22a058",
+      "name": "Belle",
+      "slug": "belle",
+      "dateOfBirth": "2026-04-05",
+      "sex": "Female",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke Tortie"
+      ],
+      "details": "Née de la portée Umy x Unico.\nPrix : 1400€\n\nLe chaton partira pucé, vacciné, vermifugé et traité contre les parasites internes et externes.\nVous aurez également : \n· Son carnet de santé\n· Un kit chaton\n· Une assurance santé vétérinaire offerte pendant 60 jours\n· Un bon de réduction Royal Canin\n\nIl sera également inscrit au LOOF, et son pedigree vous sera envoyé dès réception à l’élevage.",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775994082/Belle_UmyXUnico_05.04_v1yji0.jpg"
+      ]
+    },
+    {
+      "id": "c816d3b4-114c-4a9b-853d-a736cd59c207",
+      "name": "Bianca",
+      "slug": "bianca",
+      "dateOfBirth": "2026-04-05",
+      "sex": "Female",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Femelle black smoke tortie"
+      ],
+      "details": "Née de la portée Umy x Unico.\nPrix : 1400€\n\nLe chaton partira pucé, vacciné, vermifugé et traité contre les parasites internes et externes.\nVous aurez également : \n· Son carnet de santé\n· Un kit chaton\n· Une assurance santé vétérinaire offerte pendant 60 jours\n· Un bon de réduction Royal Canin\n\nIl sera également inscrit au LOOF, et son pedigree vous sera envoyé dès réception à l’élevage.",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775994285/Bianca_UmyXUnico_igyfwq.jpg"
+      ]
+    },
+    {
+      "id": "43f498e0-fb55-43a5-8e24-cee31bd5f998",
+      "name": "Bulle",
+      "slug": "bulle",
+      "dateOfBirth": "2026-04-05",
+      "sex": "Female",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Silver Mackerel Tabby",
+        "blanche"
+      ],
+      "details": "Née de la portée Umy x Unico.\nPrix : 1400€\n\nLe chaton partira pucé, vacciné, vermifugé et traité contre les parasites internes et externes.\nVous aurez également : \n· Son carnet de santé\n· Un kit chaton\n· Une assurance santé vétérinaire offerte pendant 60 jours\n· Un bon de réduction Royal Canin\n\nIl sera également inscrit au LOOF, et son pedigree vous sera envoyé dès réception à l’élevage.",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1775994567/Bulle_UmyXUnico_mqhoae.jpg"
       ]
     }
   ]

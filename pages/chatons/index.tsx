@@ -1,55 +1,172 @@
-import { GetServerSideProps } from 'next'
-import { Box, Container, Grid, Typography } from '@mui/material'
-import CatCard from '@/components/molecules/CatCard'
-import type { LitterWithKittens } from '@/lib/cat'
-import { getCatSlug } from '@/lib/cat'
-import { getLitterGroups } from '@/lib/cat.server'
+import type { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import {
+  Box,
+  Button,
+  Chip,
+  Container,
+  Grid,
+  Typography,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Stack,
+} from '@mui/material'
+import { getCatSlug, type Cat } from '@/lib/cat'
+import { getKittens } from '@/lib/cat.server'
 
 interface ChatonsPageProps {
-  litters: LitterWithKittens[]
+  kittens: Cat[]
 }
 
-export default function ChatonsPage({ litters }: ChatonsPageProps) {
+const sexLabel = (sex: Cat['sex']) => {
+  if (sex === 'Male') return 'Mâle'
+  return 'Femelle'
+}
+
+function CatCard({ cat }: { cat: Cat }) {
+  const slug = getCatSlug(cat)
+  const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
+  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
+
   return (
-    <Container sx={{ py: 6 }}>
-      <Typography variant="h3" gutterBottom>
-        Nos chatons
-      </Typography>
+    <Card
+      sx={{
+        height: '100%',
+        borderRadius: 4,
+        overflow: 'hidden',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      }}
+    >
+      <CardActionArea component={Link} href={`/chats/${slug}`} sx={{ height: '100%' }}>
+        <CardMedia
+          component="img"
+          image={image}
+          alt={cat.name}
+          sx={{
+            height: { xs: 260, sm: 320 },
+            objectFit: 'cover',
+          }}
+        />
 
-      {litters.map(litter => (
-        <Box key={litter.id} sx={{ mb: 6 }}>
-          <Typography variant="h4" gutterBottom>
-            {litter.title}
+        <CardContent sx={{ p: 2.5 }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={1.5}
+            gap={1}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              {cat.name}
+            </Typography>
+            <Chip label={sexLabel(cat.sex)} size="small" />
+          </Stack>
+
+          {displayColors && (
+            <Typography variant="body2" color="text.secondary" mb={1}>
+              {displayColors}
+            </Typography>
+          )}
+
+          {cat.availability && (
+            <Typography
+              variant="body2"
+              sx={{
+                mb: 1.5,
+                fontWeight: 600,
+              }}
+            >
+              {cat.availability}
+            </Typography>
+          )}
+
+          {cat.details && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {cat.details}
+            </Typography>
+          )}
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  )
+}
+
+export default function ChatonsPage({ kittens }: ChatonsPageProps) {
+  return (
+    <Box sx={{ py: { xs: 5, md: 8 } }}>
+      <Container maxWidth="lg">
+        <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 8 } }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontSize: { xs: '2rem', md: '3rem' },
+              fontWeight: 700,
+              mb: 2,
+            }}
+          >
+            Nos chatons
           </Typography>
 
-          <Typography variant="body1" sx={{ mb: 3 }}>
-            Nés le {litter.birthDate}
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
+          >
+            Retrouvez ici les chatons actuellement présentés à l’élevage, avec leurs couleurs, leur
+            personnalité et leur disponibilité.
           </Typography>
+        </Box>
 
-          <Grid container spacing={3}>
-            {litter.kittens.map(kitten => (
-              <Grid item xs={12} sm={6} md={4} key={kitten.id}>
-                <CatCard
-                  catName={kitten.name}
-                  catImage={kitten.pictures?.[0] ?? '/images/placeholder-cat.jpg'}
-                  catSex={kitten.sex}
-                  catLink={`/chats/${getCatSlug(kitten)}`}
-                />
+        {kittens.length > 0 ? (
+          <Grid container spacing={4}>
+            {kittens.map(cat => (
+              <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                <CatCard cat={cat} />
               </Grid>
             ))}
           </Grid>
-        </Box>
-      ))}
-    </Container>
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 6 }}>
+            <Typography variant="body1" color="text.secondary" mb={2}>
+              Aucun chaton n’est affiché pour le moment.
+            </Typography>
+            <Button component={Link} href="/contact" variant="contained" size="large">
+              Nous contacter
+            </Button>
+          </Box>
+        )}
+      </Container>
+    </Box>
   )
 }
 
 export const getServerSideProps: GetServerSideProps<ChatonsPageProps> = async () => {
-  const litters = await getLitterGroups()
+  try {
+    const kittens = await getKittens()
 
-  return {
-    props: {
-      litters,
-    },
+    return {
+      props: {
+        kittens,
+      },
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération des chatons :', error)
+
+    return {
+      props: {
+        kittens: [],
+      },
+    }
   }
 }

@@ -1,7 +1,18 @@
 import type { GetStaticProps } from 'next'
+import Link from 'next/link'
 import type { Cat } from '../lib/cat'
-import { Box, Container, Grid, Typography } from '@mui/material'
-import CatCard from '@/components/molecules/CatCard'
+import {
+  Box,
+  Chip,
+  Container,
+  Grid,
+  Typography,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Stack,
+} from '@mui/material'
 import PetsIcon from '@mui/icons-material/Pets'
 import { getKittens, getBreeders, countAdoptedCats } from '../lib/cat.server'
 import { getCatSlug } from '../lib/cat'
@@ -10,6 +21,89 @@ interface HomePageProps {
   kittens: Cat[]
   featuredBreeders: Cat[]
   adoptedCount: number
+}
+
+const sexLabel = (sex: Cat['sex']) => {
+  if (sex === 'Male') return 'Mâle'
+  return 'Femelle'
+}
+
+function CatCard({ cat }: { cat: Cat }) {
+  const slug = getCatSlug(cat)
+  const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
+  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
+  const isKitten = cat.type === 'kitten'
+
+  return (
+    <Card
+      sx={{
+        height: '100%',
+        borderRadius: 4,
+        overflow: 'hidden',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
+      }}
+    >
+      <CardActionArea component={Link} href={`/chats/${slug}`} sx={{ height: '100%' }}>
+        <CardMedia
+          component="img"
+          image={image}
+          alt={cat.name}
+          sx={{
+            height: { xs: 260, sm: 320 },
+            objectFit: 'cover',
+          }}
+        />
+
+        <CardContent sx={{ p: 2.5 }}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={1.5}
+            gap={1}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              {cat.name}
+            </Typography>
+            <Chip label={sexLabel(cat.sex)} size="small" />
+          </Stack>
+
+          {displayColors && (
+            <Typography variant="body2" color="text.secondary" mb={1}>
+              {displayColors}
+            </Typography>
+          )}
+
+          {isKitten && cat.availability && (
+            <Typography
+              variant="body2"
+              sx={{
+                mb: 1.5,
+                fontWeight: 600,
+              }}
+            >
+              {cat.availability}
+            </Typography>
+          )}
+
+          {cat.details && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {cat.details}
+            </Typography>
+          )}
+        </CardContent>
+      </CardActionArea>
+    </Card>
+  )
 }
 
 const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) => {
@@ -33,12 +127,7 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
         <Grid container spacing={4}>
           {featuredBreeders.map(breeder => (
             <Grid item xs={12} sm={6} key={breeder.id}>
-              <CatCard
-                catName={breeder.name}
-                catImage={breeder.pictures?.[0] ?? ''}
-                catSex={breeder.sex}
-                catLink={`/chats/${getCatSlug(breeder)}`}
-              />
+              <CatCard cat={breeder} />
             </Grid>
           ))}
         </Grid>
@@ -48,15 +137,11 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
         <Typography variant="h4" gutterBottom>
           Derniers Chatons en Date
         </Typography>
+
         <Grid container spacing={4}>
           {kittens.map(kitten => (
             <Grid item xs={12} sm={6} md={4} key={kitten.id}>
-              <CatCard
-                catName={kitten.name}
-                catImage={kitten.pictures?.[0] ?? ''}
-                catSex={kitten.sex}
-                catLink={`/chats/${getCatSlug(kitten)}`}
-              />
+              <CatCard cat={kitten} />
             </Grid>
           ))}
         </Grid>
