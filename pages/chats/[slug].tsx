@@ -244,7 +244,7 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
 
             {cat.availability === 'Disponible' && cat.type === 'kitten' && (
               <Box mt={4}>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" href="/demarche-reservation">
                   Adopte moi
                 </Button>
               </Box>
