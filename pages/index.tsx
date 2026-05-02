@@ -14,7 +14,7 @@ import {
   Stack,
 } from '@mui/material'
 import PetsIcon from '@mui/icons-material/Pets'
-import Seo from '@/components/Seo'
+import Seo from '../components/molecules/Seo'
 import { getKittens, getBreeders, countAdoptedCats } from '../lib/cat.server'
 import { getCatSlug } from '../lib/cat'
 
