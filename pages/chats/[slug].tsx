@@ -1,4 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from 'next'
+import Link from 'next/link'
 import { Box, Typography, Button, Dialog, IconButton, useMediaQuery, useTheme } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
@@ -7,10 +8,8 @@ import Image from 'next/image'
 import { useState } from 'react'
 import fs from 'fs'
 import path from 'path'
+import Seo from '@/components/molecules/Seo'
 import { getCatSlug, Cat } from '@/lib/cat'
-
-type CatType = 'kitten' | 'breeder'
-type CatAvailability = 'Disponible' | 'Réservé' | 'Adopté'
 
 interface CatProps {
   cat: Cat
@@ -86,6 +85,38 @@ const formatDate = (dateString: string | null | undefined): string => {
   return new Date(dateString).toLocaleDateString('fr-FR', options)
 }
 
+const sexLabel = (sex: Cat['sex']) => {
+  if (sex === 'Male') return 'mâle'
+  return 'femelle'
+}
+
+const typeLabel = (type: Cat['type']) => {
+  if (type === 'kitten') return 'chaton'
+  return 'reproducteur'
+}
+
+const getSeoTitle = (cat: Cat) => {
+  const sex = sexLabel(cat.sex)
+
+  if (cat.type === 'kitten') {
+    const availability = cat.availability ? ` ${cat.availability.toLowerCase()}` : ''
+    return `${cat.name}, chaton Maine Coon ${sex}${availability}`
+  }
+
+  return `${cat.name}, Maine Coon ${sex} reproducteur`
+}
+
+const getSeoDescription = (cat: Cat) => {
+  const sex = sexLabel(cat.sex)
+
+  if (cat.type === 'kitten') {
+    const availability = cat.availability ? ` actuellement ${cat.availability.toLowerCase()}` : ''
+    return `Découvrez ${cat.name}, chaton Maine Coon ${sex}${availability} de l'élevage Des Loulou Coon's, situé à Arthenac en Charente-Maritime.`
+  }
+
+  return `Découvrez ${cat.name}, Maine Coon ${sex} reproducteur de l'élevage Des Loulou Coon's, situé à Arthenac en Charente-Maritime.`
+}
+
 const CatPage: React.FC<CatProps> = ({ cat }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [viewerOpen, setViewerOpen] = useState(false)
@@ -95,6 +126,13 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
 
   const pictures = cat.pictures ?? []
   const hasPictures = pictures.length > 0
+  const slug = getCatSlug(cat)
+  const age = calculateAge(cat.dateOfBirth)
+  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(', ') : cat.colors || ''
+  const seoTitle = getSeoTitle(cat)
+  const seoDescription = getSeoDescription(cat)
+  const catTypeLabel = typeLabel(cat.type)
+  const catSexLabel = sexLabel(cat.sex)
 
   const openViewer = (index: number) => {
     setActiveImageIndex(index)
@@ -119,241 +157,285 @@ const CatPage: React.FC<CatProps> = ({ cat }) => {
     setActiveImageIndex(prev => (prev === pictures.length - 1 ? 0 : prev + 1))
   }
 
-  const age = calculateAge(cat.dateOfBirth)
-  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(', ') : cat.colors || ''
-
   return (
-    <Box
-      sx={{
-        width: '100%',
-        px: { xs: 2, sm: 4 },
-        py: { xs: 3, sm: 5 },
-      }}
-    >
+    <>
+      <Seo
+        title={seoTitle}
+        description={seoDescription}
+        canonical={`/chats/${slug}`}
+        image={pictures[0]}
+      />
+
       <Box
         sx={{
-          maxWidth: '1100px',
-          mx: 'auto',
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          {cat.name}
-        </Typography>
-
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' },
-            gap: { xs: 4, md: 6 },
-            alignItems: 'start',
-          }}
-        >
-          <Box>
-            {hasPictures ? (
-              <>
-                <Box
-                  onClick={() => openViewer(activeImageIndex)}
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
-                    height: { xs: 340, sm: 460, md: 560 },
-                    borderRadius: '20px',
-                    overflow: 'hidden',
-                    backgroundColor: '#f3f0eb',
-                    cursor: 'zoom-in',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                  }}
-                >
-                  <Image
-                    src={pictures[activeImageIndex] ?? ''}
-                    alt={`Photo de ${cat.name}`}
-                    fill
-                    sizes="(max-width: 900px) 100vw, 700px"
-                    style={{ objectFit: 'contain' }}
-                    priority
-                  />
-                </Box>
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: { xs: 'flex-start', sm: 'center' },
-                    gap: 1.5,
-                    mt: 2,
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  {pictures.map((picture, index) => (
-                    <Box
-                      key={`${picture}-${index}`}
-                      onClick={() => handleClickThumbnail(index)}
-                      sx={{
-                        width: { xs: 92, sm: 80 },
-                        height: { xs: 92, sm: 80 },
-                        position: 'relative',
-                        cursor: 'pointer',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        border:
-                          index === activeImageIndex
-                            ? '2px solid #c9a46a'
-                            : '2px solid transparent',
-                        boxShadow:
-                          index === activeImageIndex
-                            ? '0 4px 14px rgba(0,0,0,0.18)'
-                            : '0 2px 8px rgba(0,0,0,0.08)',
-                        transition: 'all 0.2s ease',
-                        flexShrink: 0,
-                      }}
-                    >
-                      <Image
-                        src={picture}
-                        alt={`Miniature de ${cat.name}`}
-                        fill
-                        sizes="(max-width: 600px) 92px, 80px"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </>
-            ) : (
-              <Typography variant="subtitle1">Pas d&rsquo;images disponibles.</Typography>
-            )}
-          </Box>
-
-          <Box>
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              Sexe : {cat.sex || 'Non renseigné'}
-            </Typography>
-
-            <Typography variant="subtitle1" sx={{ mb: 1 }}>
-              Date de naissance : {formatDate(cat.dateOfBirth ?? '')}{' '}
-              {age !== null && `(${age} ans)`}
-            </Typography>
-
-            <Typography variant="subtitle1" sx={{ mb: 2 }}>
-              Couleurs : {displayColors || 'Non renseigné'}
-            </Typography>
-
-            {cat.details && (
-              <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
-                {cat.details}
-              </Typography>
-            )}
-
-            {cat.availability === 'Disponible' && cat.type === 'kitten' && (
-              <Box mt={4}>
-                <Button variant="contained" color="primary" href="/demarche-reservation">
-                  Adopte moi
-                </Button>
-              </Box>
-            )}
-          </Box>
-        </Box>
-      </Box>
-
-      <Dialog
-        open={viewerOpen}
-        onClose={closeViewer}
-        fullScreen={isMobile}
-        maxWidth={false}
-        PaperProps={{
-          sx: {
-            backgroundColor: 'rgba(0,0,0,0.96)',
-            width: isMobile ? '100%' : '100vw',
-            height: isMobile ? '100%' : '100vh',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            margin: 0,
-          },
+          width: '100%',
+          px: { xs: 2, sm: 4 },
+          py: { xs: 3, sm: 5 },
         }}
       >
         <Box
           sx={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            maxWidth: '1100px',
+            mx: 'auto',
           }}
         >
-          <IconButton
-            onClick={closeViewer}
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
             sx={{
-              position: 'absolute',
-              top: { xs: 14, sm: 20 },
-              right: { xs: 14, sm: 20 },
-              zIndex: 3,
-              color: 'white',
-              backgroundColor: 'rgba(255,255,255,0.12)',
-              '&:hover': {
-                backgroundColor: 'rgba(255,255,255,0.2)',
-              },
+              fontWeight: 700,
             }}
           >
-            <CloseIcon />
-          </IconButton>
+            {cat.name}
+          </Typography>
 
-          {pictures.length > 1 && (
-            <>
-              <IconButton
-                onClick={showPrev}
-                sx={{
-                  position: 'absolute',
-                  left: { xs: 10, sm: 20 },
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  zIndex: 3,
-                  color: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.12)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                  },
-                }}
-              >
-                <ChevronLeftIcon />
-              </IconButton>
-
-              <IconButton
-                onClick={showNext}
-                sx={{
-                  position: 'absolute',
-                  right: { xs: 10, sm: 20 },
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  zIndex: 3,
-                  color: 'white',
-                  backgroundColor: 'rgba(255,255,255,0.12)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                  },
-                }}
-              >
-                <ChevronRightIcon />
-              </IconButton>
-            </>
-          )}
+          <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 4 }}>
+            {catTypeLabel === 'chaton' ? 'Chaton' : 'Maine Coon reproducteur'} {catSexLabel} de
+            l’élevage Des Loulou Coon&apos;s
+          </Typography>
 
           <Box
             sx={{
-              position: 'relative',
-              width: { xs: '90vw', sm: '88vw' },
-              height: { xs: '82vh', sm: '90vh' },
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' },
+              gap: { xs: 4, md: 6 },
+              alignItems: 'start',
             }}
           >
-            <Image
-              src={pictures[activeImageIndex] ?? ''}
-              alt={`Photo de ${cat.name}`}
-              fill
-              sizes="90vw"
-              style={{ objectFit: 'contain' }}
-            />
+            <Box>
+              {hasPictures ? (
+                <>
+                  <Box
+                    onClick={() => openViewer(activeImageIndex)}
+                    sx={{
+                      position: 'relative',
+                      width: '100%',
+                      height: { xs: 340, sm: 460, md: 560 },
+                      borderRadius: '20px',
+                      overflow: 'hidden',
+                      backgroundColor: '#f3f0eb',
+                      cursor: 'zoom-in',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                    }}
+                  >
+                    <Image
+                      src={pictures[activeImageIndex] ?? ''}
+                      alt={`Photo de ${cat.name}, ${catTypeLabel} Maine Coon ${catSexLabel}`}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 700px"
+                      style={{ objectFit: 'contain' }}
+                      priority
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: { xs: 'flex-start', sm: 'center' },
+                      gap: 1.5,
+                      mt: 2,
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    {pictures.map((picture, index) => (
+                      <Box
+                        key={`${picture}-${index}`}
+                        onClick={() => handleClickThumbnail(index)}
+                        sx={{
+                          width: { xs: 92, sm: 80 },
+                          height: { xs: 92, sm: 80 },
+                          position: 'relative',
+                          cursor: 'pointer',
+                          borderRadius: '12px',
+                          overflow: 'hidden',
+                          border:
+                            index === activeImageIndex
+                              ? '2px solid #c9a46a'
+                              : '2px solid transparent',
+                          boxShadow:
+                            index === activeImageIndex
+                              ? '0 4px 14px rgba(0,0,0,0.18)'
+                              : '0 2px 8px rgba(0,0,0,0.08)',
+                          transition: 'all 0.2s ease',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <Image
+                          src={picture}
+                          alt={`Miniature ${index + 1} de ${cat.name}, ${catTypeLabel} Maine Coon`}
+                          fill
+                          sizes="(max-width: 600px) 92px, 80px"
+                          style={{ objectFit: 'cover' }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                </>
+              ) : (
+                <Typography variant="subtitle1">Pas d&rsquo;images disponibles.</Typography>
+              )}
+            </Box>
+
+            <Box>
+              <Typography variant="h2" sx={{ fontSize: '1.5rem', fontWeight: 700, mb: 2 }}>
+                Informations
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Sexe : {catSexLabel}
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Date de naissance : {formatDate(cat.dateOfBirth ?? '') || 'Non renseigné'}{' '}
+                {age !== null && `(${age} ans)`}
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Couleurs : {displayColors || 'Non renseigné'}
+              </Typography>
+
+              {cat.availability && cat.type === 'kitten' && (
+                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                  Disponibilité : {cat.availability}
+                </Typography>
+              )}
+
+              {cat.details && (
+                <>
+                  <Typography
+                    variant="h2"
+                    sx={{ fontSize: '1.5rem', fontWeight: 700, mt: 4, mb: 2 }}
+                  >
+                    À propos de {cat.name}
+                  </Typography>
+
+                  <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.8 }}>
+                    {cat.details}
+                  </Typography>
+                </>
+              )}
+
+              {cat.availability === 'Disponible' && cat.type === 'kitten' && (
+                <Box mt={4}>
+                  <Button
+                    component={Link}
+                    variant="contained"
+                    color="primary"
+                    href="/demarche-reservation"
+                  >
+                    Adopte moi
+                  </Button>
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
-      </Dialog>
-    </Box>
+
+        <Dialog
+          open={viewerOpen}
+          onClose={closeViewer}
+          fullScreen={isMobile}
+          maxWidth={false}
+          PaperProps={{
+            sx: {
+              backgroundColor: 'rgba(0,0,0,0.96)',
+              width: isMobile ? '100%' : '100vw',
+              height: isMobile ? '100%' : '100vh',
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              margin: 0,
+            },
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <IconButton
+              onClick={closeViewer}
+              sx={{
+                position: 'absolute',
+                top: { xs: 14, sm: 20 },
+                right: { xs: 14, sm: 20 },
+                zIndex: 3,
+                color: 'white',
+                backgroundColor: 'rgba(255,255,255,0.12)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+
+            {pictures.length > 1 && (
+              <>
+                <IconButton
+                  onClick={showPrev}
+                  sx={{
+                    position: 'absolute',
+                    left: { xs: 10, sm: 20 },
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 3,
+                    color: 'white',
+                    backgroundColor: 'rgba(255,255,255,0.12)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                  }}
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
+
+                <IconButton
+                  onClick={showNext}
+                  sx={{
+                    position: 'absolute',
+                    right: { xs: 10, sm: 20 },
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 3,
+                    color: 'white',
+                    backgroundColor: 'rgba(255,255,255,0.12)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                    },
+                  }}
+                >
+                  <ChevronRightIcon />
+                </IconButton>
+              </>
+            )}
+
+            <Box
+              sx={{
+                position: 'relative',
+                width: { xs: '90vw', sm: '88vw' },
+                height: { xs: '82vh', sm: '90vh' },
+              }}
+            >
+              {hasPictures && (
+                <Image
+                  src={pictures[activeImageIndex] ?? ''}
+                  alt={`Photo agrandie de ${cat.name}, ${catTypeLabel} Maine Coon ${catSexLabel}`}
+                  fill
+                  sizes="90vw"
+                  style={{ objectFit: 'contain' }}
+                />
+              )}
+            </Box>
+          </Box>
+        </Dialog>
+      </Box>
+    </>
   )
 }
 
