@@ -1,4 +1,5 @@
 import type { GetStaticProps } from 'next'
+import Head from 'next/head'
 import Link from 'next/link'
 import type { Cat } from '../lib/cat'
 import {
@@ -34,6 +35,7 @@ function CatCard({ cat }: { cat: Cat }) {
   const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
   const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
   const isKitten = cat.type === 'kitten'
+  const catTypeLabel = isKitten ? 'chaton Maine Coon' : 'Maine Coon reproducteur'
 
   return (
     <Card
@@ -48,7 +50,7 @@ function CatCard({ cat }: { cat: Cat }) {
         <CardMedia
           component="img"
           image={image}
-          alt={cat.name}
+          alt={`Photo de ${cat.name}, ${catTypeLabel} ${sexLabel(cat.sex).toLowerCase()}`}
           sx={{
             height: { xs: 260, sm: 320 },
             objectFit: 'cover',
@@ -63,9 +65,10 @@ function CatCard({ cat }: { cat: Cat }) {
             mb={1.5}
             gap={1}
           >
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Typography variant="h5" component="h3" sx={{ fontWeight: 600 }}>
               {cat.name}
             </Typography>
+
             <Chip label={sexLabel(cat.sex)} size="small" />
           </Stack>
 
@@ -115,20 +118,74 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
         description="Des Loulou Coon's est un élevage familial de Maine Coon situé à Arthenac, en Charente-Maritime. Découvrez nos chatons, nos reproducteurs et notre passion pour cette race majestueuse."
         canonical="/"
       />
+
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'LocalBusiness',
+              name: "Des Loulou Coon's",
+              image: 'https://louloucoons.fr/images/logo.png',
+              url: 'https://louloucoons.fr',
+              telephone: '+33671169438',
+              email: 'deslouloucoons@outlook.fr',
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: '8 Chez Bourdet',
+                postalCode: '17520',
+                addressLocality: 'Arthenac',
+                addressCountry: 'FR',
+              },
+              description: 'Élevage familial de Maine Coon situé à Arthenac en Charente-Maritime.',
+            }),
+          }}
+        />
+      </Head>
+
       <Container>
         <Box my={4} textAlign="center">
+          <Typography
+            variant="h2"
+            component="h1"
+            sx={{
+              fontSize: { xs: '2rem', md: '3rem' },
+              fontWeight: 700,
+              mb: 2,
+            }}
+          >
+            Élevage familial de Maine Coon en Charente-Maritime
+          </Typography>
+
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8, mb: 4 }}
+          >
+            Des Loulou Coon&apos;s est un élevage familial situé à Arthenac, en Charente-Maritime.
+            Nous partageons ici nos chatons, nos reproducteurs et notre passion pour le Maine Coon.
+          </Typography>
+
           <PetsIcon sx={{ fontSize: 40, color: '#f50057' }} />
-          <Typography variant="h6" gutterBottom>
+
+          <Typography variant="h2" component="p" sx={{ fontSize: '1.2rem', mt: 1 }} gutterBottom>
             Chatons ayant trouvé une famille à nos côtés
           </Typography>
+
           <Typography variant="h4" color="primary">
             {adoptedCount}
           </Typography>
         </Box>
 
         <Box my={4}>
-          <Typography variant="h4" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-            Nos Reproducteurs Vedettes
+          <Typography
+            variant="h4"
+            component="h2"
+            gutterBottom
+            sx={{ textAlign: { xs: 'center', sm: 'left' } }}
+          >
+            Nos reproducteurs vedettes
           </Typography>
 
           <Grid container spacing={4}>
@@ -141,8 +198,8 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
         </Box>
 
         <Box my={4}>
-          <Typography variant="h4" gutterBottom>
-            Derniers Chatons en Date
+          <Typography variant="h4" component="h2" gutterBottom>
+            Derniers chatons présentés
           </Typography>
 
           <Grid container spacing={4}>
