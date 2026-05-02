@@ -13,6 +13,7 @@ import {
   CardMedia,
   Stack,
 } from '@mui/material'
+import Seo from '@/components/molecules/Seo'
 import { getCatSlug, type Cat } from '../../lib/cat'
 import { getBreeders } from '../../lib/cat.server'
 
@@ -43,7 +44,7 @@ function CatCard({ cat }: { cat: Cat }) {
         <CardMedia
           component="img"
           image={image}
-          alt={cat.name}
+          alt={`Photo de ${cat.name}, Maine Coon ${sexLabel(cat.sex).toLowerCase()} reproducteur`}
           sx={{
             height: { xs: 260, sm: 320 },
             objectFit: 'cover',
@@ -58,9 +59,10 @@ function CatCard({ cat }: { cat: Cat }) {
             mb={1.5}
             gap={1}
           >
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Typography variant="h5" component="h3" sx={{ fontWeight: 600 }}>
               {cat.name}
             </Typography>
+
             <Chip label={sexLabel(cat.sex)} size="small" />
           </Stack>
 
@@ -94,6 +96,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <Typography
       variant="h4"
+      component="h2"
       sx={{
         mb: 3,
         fontWeight: 600,
@@ -107,41 +110,94 @@ function SectionTitle({ children }: { children: ReactNode }) {
 
 export default function CatsPage({ breeders }: CatsPageProps) {
   return (
-    <Box sx={{ py: { xs: 5, md: 8 } }}>
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 8 } }}>
-          <Typography
-            variant="h2"
+    <>
+      <Seo
+        title="Nos reproducteurs Maine Coon"
+        description="Découvrez les reproducteurs Maine Coon de l'élevage Des Loulou Coon's, situé à Arthenac en Charente-Maritime."
+        canonical="/chats"
+      />
+
+      <Box sx={{ py: { xs: 5, md: 8 } }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 8 } }}>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontSize: { xs: '2rem', md: '3rem' },
+                fontWeight: 700,
+                mb: 2,
+              }}
+            >
+              Nos reproducteurs Maine Coon
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
+            >
+              Découvrez les reproducteurs Maine Coon de notre élevage familial situé à Arthenac, en
+              Charente-Maritime. Chaque mâle et femelle présenté sur cette page fait partie de
+              l’univers Des Loulou Coon&apos;s et contribue à la vie de l’élevage.
+            </Typography>
+          </Box>
+
+          <Box sx={{ mb: { xs: 6, md: 8 } }}>
+            <SectionTitle>Les chats de l’élevage</SectionTitle>
+
+            {breeders.length > 0 ? (
+              <Grid container spacing={4}>
+                {breeders.map(cat => (
+                  <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                    <CatCard cat={cat} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Box sx={{ textAlign: 'center', py: 6 }}>
+                <Typography variant="body1" color="text.secondary">
+                  Aucun reproducteur n’est affiché pour le moment.
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          <Box
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
-              fontWeight: 700,
-              mb: 2,
+              mt: { xs: 6, md: 8 },
+              p: { xs: 3, md: 4 },
+              borderRadius: 4,
+              backgroundColor: 'rgba(0, 0, 0, 0.03)',
+              textAlign: 'center',
             }}
           >
-            Nos reproducteurs
-          </Typography>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
-          >
-            Découvrez nos reproducteurs, leur caractère, leurs couleurs et leur univers au sein de
-            l’élevage.
-          </Typography>
-        </Box>
+            <Typography
+              variant="h3"
+              component="h2"
+              sx={{
+                fontSize: { xs: '1.5rem', md: '2rem' },
+                fontWeight: 700,
+                mb: 2,
+              }}
+            >
+              Un élevage familial avant tout
+            </Typography>
 
-        <Box sx={{ mb: { xs: 6, md: 8 } }}>
-          <SectionTitle>Nos Reproducteurs</SectionTitle>
-          <Grid container spacing={4}>
-            {breeders.map(cat => (
-              <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                <CatCard cat={cat} />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Container>
-    </Box>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
+            >
+              Chez Des Loulou Coon&apos;s, nos Maine Coon évoluent dans un environnement familial,
+              avec une attention particulière portée à leur bien-être, leur caractère et leur
+              équilibre. Cette proximité permet de mieux connaître chaque chat et d’accompagner les
+              futures familles avec sérieux et transparence.
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
+    </>
   )
 }
 
