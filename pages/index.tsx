@@ -14,6 +14,7 @@ import {
   Stack,
 } from '@mui/material'
 import PetsIcon from '@mui/icons-material/Pets'
+import Seo from '@/components/Seo'
 import { getKittens, getBreeders, countAdoptedCats } from '../lib/cat.server'
 import { getCatSlug } from '../lib/cat'
 
@@ -108,45 +109,52 @@ function CatCard({ cat }: { cat: Cat }) {
 
 const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) => {
   return (
-    <Container>
-      <Box my={4} textAlign="center">
-        <PetsIcon sx={{ fontSize: 40, color: '#f50057' }} />
-        <Typography variant="h6" gutterBottom>
-          Chatons ayant trouvé une famille à nos côtés
-        </Typography>
-        <Typography variant="h4" color="primary">
-          {adoptedCount}
-        </Typography>
-      </Box>
+    <>
+      <Seo
+        title="Élevage Maine Coon en Charente-Maritime"
+        description="Des Loulou Coon's est un élevage familial de Maine Coon situé à Arthenac, en Charente-Maritime. Découvrez nos chatons, nos reproducteurs et notre passion pour cette race majestueuse."
+        canonical="/"
+      />
+      <Container>
+        <Box my={4} textAlign="center">
+          <PetsIcon sx={{ fontSize: 40, color: '#f50057' }} />
+          <Typography variant="h6" gutterBottom>
+            Chatons ayant trouvé une famille à nos côtés
+          </Typography>
+          <Typography variant="h4" color="primary">
+            {adoptedCount}
+          </Typography>
+        </Box>
 
-      <Box my={4}>
-        <Typography variant="h4" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          Nos Reproducteurs Vedettes
-        </Typography>
+        <Box my={4}>
+          <Typography variant="h4" gutterBottom sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+            Nos Reproducteurs Vedettes
+          </Typography>
 
-        <Grid container spacing={4}>
-          {featuredBreeders.map(breeder => (
-            <Grid item xs={12} sm={6} key={breeder.id}>
-              <CatCard cat={breeder} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+          <Grid container spacing={4}>
+            {featuredBreeders.map(breeder => (
+              <Grid item xs={12} sm={6} key={breeder.id}>
+                <CatCard cat={breeder} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
-      <Box my={4}>
-        <Typography variant="h4" gutterBottom>
-          Derniers Chatons en Date
-        </Typography>
+        <Box my={4}>
+          <Typography variant="h4" gutterBottom>
+            Derniers Chatons en Date
+          </Typography>
 
-        <Grid container spacing={4}>
-          {kittens.map(kitten => (
-            <Grid item xs={12} sm={6} md={4} key={kitten.id}>
-              <CatCard cat={kitten} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Container>
+          <Grid container spacing={4}>
+            {kittens.map(kitten => (
+              <Grid item xs={12} sm={6} md={4} key={kitten.id}>
+                <CatCard cat={kitten} />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Container>
+    </>
   )
 }
 
