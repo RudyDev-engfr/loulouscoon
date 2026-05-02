@@ -13,6 +13,7 @@ import {
   CardMedia,
   Stack,
 } from '@mui/material'
+import Seo from '@/components/molecules/Seo'
 import { getCatSlug, type Cat } from '@/lib/cat'
 import { getKittens } from '@/lib/cat.server'
 
@@ -43,7 +44,7 @@ function CatCard({ cat }: { cat: Cat }) {
         <CardMedia
           component="img"
           image={image}
-          alt={cat.name}
+          alt={`Photo de ${cat.name}, chaton Maine Coon ${sexLabel(cat.sex).toLowerCase()}`}
           sx={{
             height: { xs: 260, sm: 320 },
             objectFit: 'cover',
@@ -58,9 +59,10 @@ function CatCard({ cat }: { cat: Cat }) {
             mb={1.5}
             gap={1}
           >
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
               {cat.name}
             </Typography>
+
             <Chip label={sexLabel(cat.sex)} size="small" />
           </Stack>
 
@@ -104,50 +106,103 @@ function CatCard({ cat }: { cat: Cat }) {
 
 export default function ChatonsPage({ kittens }: ChatonsPageProps) {
   return (
-    <Box sx={{ py: { xs: 5, md: 8 } }}>
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 8 } }}>
-          <Typography
-            variant="h2"
+    <>
+      <Seo
+        title="Chatons Maine Coon disponibles"
+        description="Découvrez les chatons Maine Coon de l'élevage Des Loulou Coon's, élevés avec attention à Arthenac en Charente-Maritime."
+        canonical="/chatons"
+      />
+
+      <Box sx={{ py: { xs: 5, md: 8 } }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: { xs: 5, md: 8 } }}>
+            <Typography
+              variant="h2"
+              component="h1"
+              sx={{
+                fontSize: { xs: '2rem', md: '3rem' },
+                fontWeight: 700,
+                mb: 2,
+              }}
+            >
+              Nos chatons Maine Coon
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
+            >
+              Découvrez les chatons Maine Coon de notre élevage familial situé à Arthenac, en
+              Charente-Maritime. Chaque chaton est présenté avec ses couleurs, sa personnalité et sa
+              disponibilité afin d’accompagner au mieux les familles dans leur projet d’adoption.
+            </Typography>
+          </Box>
+
+          {kittens.length > 0 ? (
+            <Grid container spacing={4}>
+              {kittens.map(cat => (
+                <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                  <CatCard cat={cat} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Box sx={{ textAlign: 'center', py: 6 }}>
+              <Typography variant="h2" component="h2" sx={{ fontSize: '1.6rem', mb: 2 }}>
+                Aucun chaton affiché pour le moment
+              </Typography>
+
+              <Typography variant="body1" color="text.secondary" mb={2}>
+                Aucun chaton n’est actuellement présenté sur le site. Vous pouvez contacter
+                l’élevage pour en savoir plus sur les prochaines portées ou les disponibilités à
+                venir.
+              </Typography>
+
+              <Button component={Link} href="/contact" variant="contained" size="large">
+                Nous contacter
+              </Button>
+            </Box>
+          )}
+
+          <Box
             sx={{
-              fontSize: { xs: '2rem', md: '3rem' },
-              fontWeight: 700,
-              mb: 2,
+              mt: { xs: 6, md: 8 },
+              p: { xs: 3, md: 4 },
+              borderRadius: 4,
+              backgroundColor: 'rgba(0, 0, 0, 0.03)',
+              textAlign: 'center',
             }}
           >
-            Nos chatons
-          </Typography>
-
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8 }}
-          >
-            Retrouvez ici les chatons actuellement présentés à l’élevage, avec leurs couleurs, leur
-            personnalité et leur disponibilité.
-          </Typography>
-        </Box>
-
-        {kittens.length > 0 ? (
-          <Grid container spacing={4}>
-            {kittens.map(cat => (
-              <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                <CatCard cat={cat} />
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Box sx={{ textAlign: 'center', py: 6 }}>
-            <Typography variant="body1" color="text.secondary" mb={2}>
-              Aucun chaton n’est affiché pour le moment.
+            <Typography
+              variant="h3"
+              component="h2"
+              sx={{
+                fontSize: { xs: '1.5rem', md: '2rem' },
+                fontWeight: 700,
+                mb: 2,
+              }}
+            >
+              Vous souhaitez adopter un chaton Maine Coon ?
             </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8, mb: 3 }}
+            >
+              Pour toute demande de réservation ou d’information, l’élevage Des Loulou Coon&apos;s
+              vous accompagne dans les différentes étapes : présentation des chatons, contrat de
+              réservation, attestation d’engagement et préparation du départ dans la future famille.
+            </Typography>
+
             <Button component={Link} href="/contact" variant="contained" size="large">
-              Nous contacter
+              Contacter l’élevage
             </Button>
           </Box>
-        )}
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </>
   )
 }
 
