@@ -55,7 +55,7 @@
       "dateOfBirth": "2026-04-05",
       "sex": "Male",
       "type": "kitten",
-      "availability": "Disponible",
+      "availability": "Réservé",
       "vaccines": [],
       "chip": null,
       "colors": [
@@ -93,7 +93,7 @@
       "dateOfBirth": "2026-04-05",
       "sex": "Female",
       "type": "kitten",
-      "availability": "Disponible",
+      "availability": "Réservé",
       "vaccines": [],
       "chip": null,
       "colors": [
@@ -112,7 +112,7 @@
       "dateOfBirth": "2026-04-05",
       "sex": "Female",
       "type": "kitten",
-      "availability": "Disponible",
+      "availability": "Réservé",
       "vaccines": [],
       "chip": null,
       "colors": [
@@ -131,7 +131,7 @@
       "dateOfBirth": "2026-04-05",
       "sex": "Female",
       "type": "kitten",
-      "availability": "Disponible",
+      "availability": "Réservé",
       "vaccines": [],
       "chip": null,
       "colors": [
@@ -142,6 +142,43 @@
       "pictures": [
         "https://res.cloudinary.com/djp6audpi/image/upload/v1777826432/bulle2_nwziv7.jpg",
         "https://res.cloudinary.com/djp6audpi/image/upload/v1775994567/Bulle_UmyXUnico_mqhoae.jpg"
+      ]
+    },
+    {
+      "id": "df319787-c6a0-4364-b9b3-3b83bd1b1005",
+      "name": "Atila",
+      "slug": "atila",
+      "dateOfBirth": "2025-05-06",
+      "sex": "Male",
+      "type": "breeder",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke"
+      ],
+      "details": "Reproducteur Mâle",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1780756301/atila-1_rnbx9w.png",
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1780756301/Atila-2_vj1sfw.png"
+      ]
+    },
+    {
+      "id": "0276028d-7520-41b9-9cfb-84ed8a879a06",
+      "name": "Salameche",
+      "slug": "salameche",
+      "dateOfBirth": "2021-12-31",
+      "sex": "Female",
+      "type": "breeder",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Brown ticked tabby"
+      ],
+      "details": "Reproductrice Femelle",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1780756433/salameche-1_vu2jgc.jpg"
       ]
     }
   ]
