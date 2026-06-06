@@ -1,21 +1,10 @@
 import type { GetStaticProps } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import type { Cat } from '../lib/cat'
-import {
-  Box,
-  Chip,
-  Container,
-  Grid,
-  Typography,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Stack,
-} from '@mui/material'
+import { Box, Container, Grid, Typography } from '@mui/material'
 import PetsIcon from '@mui/icons-material/Pets'
 import Seo from '../components/molecules/Seo'
+import CatCard from '../components/molecules/CatCard'
 import { getKittens, getBreeders, countAdoptedCats } from '../lib/cat.server'
 import { getCatSlug } from '../lib/cat'
 
@@ -30,84 +19,8 @@ const sexLabel = (sex: Cat['sex']) => {
   return 'Femelle'
 }
 
-function CatCard({ cat }: { cat: Cat }) {
-  const slug = getCatSlug(cat)
-  const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
-  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
-  const isKitten = cat.type === 'kitten'
-  const catTypeLabel = isKitten ? 'chaton Maine Coon' : 'Maine Coon reproducteur'
-
-  return (
-    <Card
-      sx={{
-        height: '100%',
-        borderRadius: 4,
-        overflow: 'hidden',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-      }}
-    >
-      <CardActionArea component={Link} href={`/chats/${slug}`} sx={{ height: '100%' }}>
-        <CardMedia
-          component="img"
-          image={image}
-          alt={`Photo de ${cat.name}, ${catTypeLabel} ${sexLabel(cat.sex).toLowerCase()}`}
-          sx={{
-            height: { xs: 260, sm: 320 },
-            objectFit: 'cover',
-          }}
-        />
-
-        <CardContent sx={{ p: 2.5 }}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={1.5}
-            gap={1}
-          >
-            <Typography variant="h5" component="h3" sx={{ fontWeight: 600 }}>
-              {cat.name}
-            </Typography>
-
-            <Chip label={sexLabel(cat.sex)} size="small" />
-          </Stack>
-
-          {displayColors && (
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {displayColors}
-            </Typography>
-          )}
-
-          {isKitten && cat.availability && (
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1.5,
-                fontWeight: 600,
-              }}
-            >
-              {cat.availability}
-            </Typography>
-          )}
-
-          {cat.details && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
-              {cat.details}
-            </Typography>
-          )}
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  )
+const getCatImage = (cat: Cat) => {
+  return cat.pictures?.[0] || '/images/placeholder-cat.jpg'
 }
 
 const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) => {
@@ -191,21 +104,42 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
           <Grid container spacing={4}>
             {featuredBreeders.map(breeder => (
               <Grid item xs={12} sm={6} key={breeder.id}>
-                <CatCard cat={breeder} />
+                <CatCard
+                  catName={breeder.name}
+                  catImage={getCatImage(breeder)}
+                  catSex={sexLabel(breeder.sex)}
+                  catLink={`/chats/${getCatSlug(breeder)}`}
+                  availability={breeder.availability}
+                  catColors={breeder.colors}
+                  catDetails={breeder.details}
+                />
               </Grid>
             ))}
           </Grid>
         </Box>
 
         <Box my={4}>
-          <Typography variant="h4" component="h2" gutterBottom>
+          <Typography
+            variant="h4"
+            component="h2"
+            gutterBottom
+            sx={{ textAlign: { xs: 'center', sm: 'left' } }}
+          >
             Derniers chatons présentés
           </Typography>
 
           <Grid container spacing={4}>
             {kittens.map(kitten => (
               <Grid item xs={12} sm={6} md={4} key={kitten.id}>
-                <CatCard cat={kitten} />
+                <CatCard
+                  catName={kitten.name}
+                  catImage={getCatImage(kitten)}
+                  catSex={sexLabel(kitten.sex)}
+                  catLink={`/chats/${getCatSlug(kitten)}`}
+                  availability={kitten.availability}
+                  catColors={kitten.colors}
+                  catDetails={kitten.details}
+                />
               </Grid>
             ))}
           </Grid>

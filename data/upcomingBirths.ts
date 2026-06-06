@@ -8,10 +8,10 @@ export type UpcomingBirth = {
 
 export const upcomingBirths: UpcomingBirth[] = [
   {
-    motherSlug: 'umy',
-    fatherSlug: 'unico',
-    expectedDate: 'Été 2026',
+    motherSlug: 'salameche',
+    fatherSlug: 'atila',
+    expectedDate: 'Juin 2026',
     status: 'Naissance à venir',
-    note: 'Une belle portée est espérée entre Umy et Unico.',
+    note: 'Une belle portée est espérée entre Atila et Salameche.',
   },
 ]

@@ -11,7 +11,7 @@ export interface Cat {
   colors?: string[]
   details?: string
   pictures: string[]
-  availability?: CatAvailability | null
+  availability: CatAvailability | null | undefined
   litterId?: string
 }
 

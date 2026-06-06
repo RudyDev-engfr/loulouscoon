@@ -1,19 +1,8 @@
 import type { GetServerSideProps } from 'next'
 import Link from 'next/link'
-import {
-  Box,
-  Button,
-  Chip,
-  Container,
-  Grid,
-  Typography,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Stack,
-} from '@mui/material'
+import { Box, Button, Container, Grid, Typography } from '@mui/material'
 import Seo from '@/components/molecules/Seo'
+import CatCard from '@/components/molecules/CatCard'
 import { getCatSlug, type Cat } from '@/lib/cat'
 import { getKittens } from '@/lib/cat.server'
 
@@ -26,85 +15,33 @@ const sexLabel = (sex: Cat['sex']) => {
   return 'Femelle'
 }
 
-function CatCard({ cat }: { cat: Cat }) {
-  const slug = getCatSlug(cat)
-  const image = cat.pictures?.[0] || '/images/placeholder-cat.jpg'
-  const displayColors = Array.isArray(cat.colors) ? cat.colors.join(' • ') : cat.colors || ''
+const getCatImage = (cat: Cat) => {
+  return cat.pictures?.[0] || '/images/placeholder-cat.jpg'
+}
 
-  return (
-    <Card
-      sx={{
-        height: '100%',
-        borderRadius: 4,
-        overflow: 'hidden',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-      }}
-    >
-      <CardActionArea component={Link} href={`/chats/${slug}`} sx={{ height: '100%' }}>
-        <CardMedia
-          component="img"
-          image={image}
-          alt={`Photo de ${cat.name}, chaton Maine Coon ${sexLabel(cat.sex).toLowerCase()}`}
-          sx={{
-            height: { xs: 260, sm: 320 },
-            objectFit: 'cover',
-          }}
-        />
-
-        <CardContent sx={{ p: 2.5 }}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={1.5}
-            gap={1}
-          >
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
-              {cat.name}
-            </Typography>
-
-            <Chip label={sexLabel(cat.sex)} size="small" />
-          </Stack>
-
-          {displayColors && (
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {displayColors}
-            </Typography>
-          )}
-
-          {cat.availability && (
-            <Typography
-              variant="body2"
-              sx={{
-                mb: 1.5,
-                fontWeight: 600,
-              }}
-            >
-              {cat.availability}
-            </Typography>
-          )}
-
-          {cat.details && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-              }}
-            >
-              {cat.details}
-            </Typography>
-          )}
-        </CardContent>
-      </CardActionArea>
-    </Card>
-  )
+const normalizeAvailability = (availability?: Cat['availability']) => {
+  return availability
+    ?.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 }
 
 export default function ChatonsPage({ kittens }: ChatonsPageProps) {
+  const availableKittens = kittens.filter(
+    kitten => normalizeAvailability(kitten.availability) === 'disponible'
+  )
+
+  const reservedKittens = kittens.filter(
+    kitten => normalizeAvailability(kitten.availability) === 'reserve'
+  )
+
+  const otherKittens = kittens.filter(kitten => {
+    const availability = normalizeAvailability(kitten.availability)
+    return availability !== 'disponible' && availability !== 'reserve'
+  })
+
+  const hasKittens = kittens.length > 0
+
   return (
     <>
       <Seo
@@ -139,14 +76,112 @@ export default function ChatonsPage({ kittens }: ChatonsPageProps) {
             </Typography>
           </Box>
 
-          {kittens.length > 0 ? (
-            <Grid container spacing={4}>
-              {kittens.map(cat => (
-                <Grid item xs={12} sm={6} md={4} key={cat.id}>
-                  <CatCard cat={cat} />
-                </Grid>
-              ))}
-            </Grid>
+          {hasKittens ? (
+            <>
+              {availableKittens.length > 0 && (
+                <Box sx={{ mb: { xs: 6, md: 8 } }}>
+                  <Typography
+                    variant="h3"
+                    component="h2"
+                    sx={{
+                      fontSize: { xs: '1.6rem', md: '2.1rem' },
+                      fontWeight: 700,
+                      mb: 1,
+                    }}
+                  >
+                    Chatons disponibles
+                  </Typography>
+
+                  <Typography color="text.secondary" sx={{ mb: 3 }}>
+                    Ces chatons peuvent encore rejoindre une famille.
+                  </Typography>
+
+                  <Grid container spacing={4}>
+                    {availableKittens.map(cat => (
+                      <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                        <CatCard
+                          catName={cat.name}
+                          catImage={getCatImage(cat)}
+                          catSex={sexLabel(cat.sex)}
+                          catLink={`/chats/${getCatSlug(cat)}`}
+                          availability={cat.availability}
+                          catColors={cat.colors}
+                          catDetails={cat.details}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+
+              {otherKittens.length > 0 && (
+                <Box sx={{ mb: { xs: 6, md: 8 } }}>
+                  <Typography
+                    variant="h3"
+                    component="h2"
+                    sx={{
+                      fontSize: { xs: '1.6rem', md: '2.1rem' },
+                      fontWeight: 700,
+                      mb: 3,
+                    }}
+                  >
+                    Autres chatons
+                  </Typography>
+
+                  <Grid container spacing={4}>
+                    {otherKittens.map(cat => (
+                      <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                        <CatCard
+                          catName={cat.name}
+                          catImage={getCatImage(cat)}
+                          catSex={sexLabel(cat.sex)}
+                          catLink={`/chats/${getCatSlug(cat)}`}
+                          availability={cat.availability}
+                          catColors={cat.colors}
+                          catDetails={cat.details}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+
+              {reservedKittens.length > 0 && (
+                <Box sx={{ mb: { xs: 6, md: 8 } }}>
+                  <Typography
+                    variant="h3"
+                    component="h2"
+                    sx={{
+                      fontSize: { xs: '1.6rem', md: '2.1rem' },
+                      fontWeight: 700,
+                      mb: 1,
+                    }}
+                  >
+                    Chatons déjà réservés
+                  </Typography>
+
+                  <Typography color="text.secondary" sx={{ mb: 3 }}>
+                    Ils ont déjà trouvé leur future famille.
+                  </Typography>
+
+                  <Grid container spacing={4}>
+                    {reservedKittens.map(cat => (
+                      <Grid item xs={12} sm={6} md={4} key={cat.id}>
+                        <CatCard
+                          catName={cat.name}
+                          catImage={getCatImage(cat)}
+                          catSex={sexLabel(cat.sex)}
+                          catLink={`/chats/${getCatSlug(cat)}`}
+                          availability={cat.availability}
+                          catColors={cat.colors}
+                          catDetails={cat.details}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+            </>
           ) : (
             <Box sx={{ textAlign: 'center', py: 6 }}>
               <Typography variant="h2" component="h2" sx={{ fontSize: '1.6rem', mb: 2 }}>

@@ -51,10 +51,17 @@ function normalizeAvailability(value?: string | null) {
     .trim()
 }
 
-export async function countAdoptedCats(): Promise<number> {
-  const cats = await readCatsFile()
+export const countAdoptedCats = async () => {
+  const cats = await getCats()
 
-  return cats.filter(cat => normalizeAvailability(cat.availability) === 'adopte').length
+  return cats.filter(cat => {
+    const availability = cat.availability
+      ?.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+
+    return availability === 'adopte' || availability === 'reserve'
+  }).length
 }
 
 export async function getLitterGroups(): Promise<LitterWithKittens[]> {
