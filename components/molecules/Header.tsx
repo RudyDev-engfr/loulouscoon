@@ -18,6 +18,7 @@ import { useTheme } from '@mui/material/styles'
 const navItems = [
   { label: 'Accueil', href: '/' },
   { label: 'Nos reproducteurs', href: '/chats' },
+  { label: 'Naissances à venir', href: '/naissances-a-venir' },
   { label: 'Nos chatons', href: '/chatons' },
   { label: 'Contact', href: '/contact' },
 ]
