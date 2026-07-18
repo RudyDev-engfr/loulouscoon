@@ -15,6 +15,7 @@ interface Cat {
   sex: 'Male' | 'Female'
   type: CatType
   availability?: CatAvailability
+  price?: number | null
   vaccines?: {
     vaccineName?: string | null
     dateGiven?: string | null
@@ -42,6 +43,28 @@ const slugify = (value: string): string => {
     .replace(/^-+|-+$/g, '')
 }
 
+const normalizePrice = (
+  value: unknown,
+  type: CatType,
+  availability: CatAvailability
+): number | null => {
+  if (type !== 'kitten' || availability === 'Adopté') {
+    return null
+  }
+
+  if (value === null || value === undefined || value === '') {
+    return null
+  }
+
+  const price = Number(value)
+
+  if (!Number.isFinite(price) || price < 0) {
+    return null
+  }
+
+  return Math.round(price)
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!isAdminAuthenticated(req)) {
     return res.status(401).json({ message: 'Non autorisé' })
@@ -59,18 +82,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const catData = req.body || {}
 
+    const type: CatType = catData.type === 'breeder' ? 'breeder' : 'kitten'
+
+    const availability: CatAvailability =
+      catData.availability === 'Réservé' || catData.availability === 'Adopté'
+        ? catData.availability
+        : 'Disponible'
+
+    if (!catData.name || typeof catData.name !== 'string') {
+      return res.status(400).json({
+        message: 'Le nom du chat est obligatoire',
+      })
+    }
+
+    if (catData.sex !== 'Male' && catData.sex !== 'Female') {
+      return res.status(400).json({
+        message: 'Le sexe du chat est invalide',
+      })
+    }
+
     const newCat: Cat = {
       id: crypto.randomUUID(),
-      name: catData.name,
-      slug: catData.slug || slugify(catData.name || ''),
+      name: catData.name.trim(),
+      slug: catData.slug || slugify(catData.name),
       dateOfBirth: catData.dateOfBirth || '',
       sex: catData.sex,
-      type: catData.type,
-      availability: catData.availability || 'Disponible',
+      type,
+      availability,
+      price: normalizePrice(catData.price, type, availability),
       vaccines: Array.isArray(catData.vaccines) ? catData.vaccines : [],
       chip: catData.chip || null,
       colors: Array.isArray(catData.colors) ? catData.colors : [],
-      details: catData.details || '',
+      details: typeof catData.details === 'string' ? catData.details : '',
       pictures: Array.isArray(catData.pictures) ? catData.pictures : [],
     }
 
@@ -79,8 +122,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     fs.writeFileSync(filePath, JSON.stringify(db, null, 2), 'utf-8')
 
     return res.status(201).json(newCat)
-  } catch (error: any) {
-    return res.status(500).json({ message: error.message || 'Something went wrong' })
+  } catch (error: unknown) {
+    console.error('Erreur addCat :', error)
+
+    const message = error instanceof Error ? error.message : 'Une erreur est survenue'
+
+    return res.status(500).json({ message })
   }
 }
 

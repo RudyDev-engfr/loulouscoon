@@ -1,6 +1,14 @@
 // components/molecules/CatForm.tsx
 import React, { useEffect, useState } from 'react'
-import { TextField, Button, Typography, Container, Paper, MenuItem } from '@mui/material'
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Paper,
+  MenuItem,
+  InputAdornment,
+} from '@mui/material'
 import ImageLinksInput from './ImageLinksInput'
 
 interface CatFormData {
@@ -12,6 +20,7 @@ interface CatFormData {
   details: string
   pictures: string[]
   availability: 'Disponible' | 'Réservé' | 'Adopté'
+  price: string
 }
 
 interface Cat {
@@ -24,10 +33,12 @@ interface Cat {
   details: string
   pictures: string[]
   availability: 'Disponible' | 'Réservé' | 'Adopté'
+  price?: number | null
 }
 
-type CatPayload = Omit<CatFormData, 'colors'> & {
+type CatPayload = Omit<CatFormData, 'colors' | 'price'> & {
   colors: string[]
+  price: number | null
 }
 
 interface CatFormProps {
@@ -44,12 +55,13 @@ const initialFormData: CatFormData = {
   details: '',
   pictures: [],
   availability: 'Disponible',
+  price: '',
 }
 
 const normalizeColors = (value: string): string[] => {
   return value
     .split(/[,;/\n]+/)
-    .map(c => c.trim())
+    .map(color => color.trim())
     .filter(Boolean)
 }
 
@@ -58,6 +70,8 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
   const [loading, setLoading] = useState(false)
 
   const isEditMode = Boolean(initialData?.id)
+
+  const shouldDisplayPrice = formData.type === 'kitten' && formData.availability !== 'Adopté'
 
   useEffect(() => {
     if (initialData) {
@@ -70,28 +84,47 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
         details: initialData.details || '',
         pictures: initialData.pictures || [],
         availability: initialData.availability || 'Disponible',
+        price:
+          initialData.price !== null && initialData.price !== undefined
+            ? String(initialData.price)
+            : '',
       })
     } else {
       setFormData(initialFormData)
     }
   }, [initialData])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+
+    setFormData(previousFormData => ({
+      ...previousFormData,
+      [name]: value,
     }))
   }
 
   const handlePicturesChange = (pictures: string[]) => {
-    setFormData(prev => ({
-      ...prev,
+    setFormData(previousFormData => ({
+      ...previousFormData,
       pictures,
     }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+
+    const trimmedPrice = formData.price.trim()
+    const parsedPrice = trimmedPrice === '' ? null : Number(trimmedPrice)
+
+    if (
+      shouldDisplayPrice &&
+      parsedPrice !== null &&
+      (!Number.isFinite(parsedPrice) || parsedPrice < 0)
+    ) {
+      alert('Le prix doit être un nombre positif.')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -106,6 +139,7 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
         details: formData.details,
         pictures: filteredPictures,
         availability: formData.availability,
+        price: shouldDisplayPrice ? parsedPrice : null,
       }
 
       if (isEditMode && initialData?.id) {
@@ -121,7 +155,9 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
       })
 
       if (!response.ok) {
-        throw new Error('Erreur lors de l’enregistrement du chat')
+        const errorData = await response.json().catch(() => null)
+
+        throw new Error(errorData?.message || 'Erreur lors de l’enregistrement du chat')
       }
 
       if (isEditMode) {
@@ -131,13 +167,16 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
         alert('Chat ajouté avec succès')
       }
 
-      if (onSuccess) {
-        onSuccess()
-      }
+      onSuccess?.()
     } catch (error) {
       console.error(error)
+
       alert(
-        isEditMode ? 'Erreur lors de la modification du chat' : 'Erreur lors de l’ajout du chat'
+        error instanceof Error
+          ? error.message
+          : isEditMode
+          ? 'Erreur lors de la modification du chat'
+          : 'Erreur lors de l’ajout du chat'
       )
     } finally {
       setLoading(false)
@@ -191,8 +230,8 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
             onChange={handleChange}
             required
           >
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
+            <option value="Male">Mâle</option>
+            <option value="Female">Femelle</option>
           </TextField>
 
           <TextField
@@ -228,6 +267,37 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
             <MenuItem value="Adopté">Adopté</MenuItem>
           </TextField>
 
+          {shouldDisplayPrice && (
+            <TextField
+              fullWidth
+              margin="normal"
+              id="price"
+              name="price"
+              label="Prix"
+              type="text"
+              variant="outlined"
+              value={formData.price}
+              onChange={event => {
+                const value = event.target.value
+
+                if (/^\d*$/.test(value)) {
+                  setFormData(previousFormData => ({
+                    ...previousFormData,
+                    price: value,
+                  }))
+                }
+              }}
+              inputProps={{
+                inputMode: 'numeric',
+                pattern: '[0-9]*',
+              }}
+              helperText="Champ facultatif"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">€</InputAdornment>,
+              }}
+            />
+          )}
+
           <TextField
             fullWidth
             margin="normal"
@@ -238,7 +308,7 @@ const CatForm: React.FC<CatFormProps> = ({ initialData = null, onSuccess }) => {
             value={formData.colors}
             onChange={handleChange}
             required
-            helperText="Sépare les couleurs par des virgules (ex: Black silver mackerel tabby, Blue silver)"
+            helperText="Sépare les couleurs par des virgules (ex : Black silver mackerel tabby, Blue silver)"
           />
 
           <TextField

@@ -182,6 +182,7 @@ const HomePage = ({
                     availability={kitten.availability}
                     catColors={kitten.colors}
                     catDetails={kitten.details}
+                    catPrice={kitten.price}
                   />
                 </Grid>
               ))}
@@ -226,6 +227,7 @@ const HomePage = ({
                     availability={kitten.availability}
                     catColors={kitten.colors}
                     catDetails={kitten.details}
+                    catPrice={kitten.price}
                   />
                 </Grid>
               ))}

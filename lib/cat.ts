@@ -5,14 +5,14 @@ export type CatAvailability = 'Disponible' | 'Réservé' | 'Adopté'
 export interface Cat {
   id: string
   name: string
-  dateOfBirth?: string
+  dateOfBirth: string
   sex: 'Male' | 'Female'
-  type: CatType
-  colors?: string[]
-  details?: string
+  type: 'kitten' | 'breeder'
+  colors: string[]
+  details: string
   pictures: string[]
-  availability: CatAvailability | null | undefined
-  litterId?: string
+  availability: 'Disponible' | 'Réservé' | 'Adopté'
+  price?: number | null
 }
 
 export interface LitterGroup {

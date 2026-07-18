@@ -182,6 +182,7 @@ export default function ChatonsPage({ kittens }: ChatonsPageProps) {
                           availability={cat.availability}
                           catColors={cat.colors}
                           catDetails={cat.details}
+                          catPrice={cat.price}
                         />
                       </Grid>
                     ))}
@@ -218,6 +219,7 @@ export default function ChatonsPage({ kittens }: ChatonsPageProps) {
                           availability={cat.availability}
                           catColors={cat.colors}
                           catDetails={cat.details}
+                          catPrice={cat.price}
                         />
                       </Grid>
                     ))}
@@ -262,6 +264,7 @@ export default function ChatonsPage({ kittens }: ChatonsPageProps) {
                           availability={cat.availability}
                           catColors={cat.colors}
                           catDetails={cat.details}
+                          catPrice={cat.price}
                         />
                       </Grid>
                     ))}

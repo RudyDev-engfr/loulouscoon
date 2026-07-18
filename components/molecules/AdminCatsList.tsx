@@ -11,6 +11,7 @@ export interface Cat {
   details: string
   pictures: string[]
   availability: 'Disponible' | 'Réservé' | 'Adopté'
+  price?: number | null
 }
 
 interface AdminCatsListProps {

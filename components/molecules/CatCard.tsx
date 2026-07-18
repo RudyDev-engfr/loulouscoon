@@ -10,6 +10,7 @@ const useStyles = makeStyles({ name: 'CatCard' })(theme => ({
     maxWidth: 380,
     overflow: 'hidden',
     boxShadow: '0 14px 35px rgba(0,0,0,0.12)',
+
     [theme.breakpoints.down('sm')]: {
       width: 'calc(100vw - 40px)',
       maxWidth: 430,
@@ -34,7 +35,7 @@ const useStyles = makeStyles({ name: 'CatCard' })(theme => ({
   },
 
   footer: {
-    minHeight: 250,
+    minHeight: 230,
     display: 'flex',
     flexDirection: 'column',
     gap: 10,
@@ -81,10 +82,13 @@ const useStyles = makeStyles({ name: 'CatCard' })(theme => ({
     padding: '7px 14px',
     fontFamily: 'Poppins',
     fontSize: 13,
-    fontWeight: 800,
+    fontWeight: 700,
     textAlign: 'center',
-    letterSpacing: 0.2,
+    letterSpacing: 0.15,
     alignSelf: 'flex-start',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
   },
 
   reservedBanner: {
@@ -102,6 +106,17 @@ const useStyles = makeStyles({ name: 'CatCard' })(theme => ({
   defaultBanner: {
     background: '#eeeeee',
     color: '#333',
+    border: '1px solid transparent',
+  },
+
+  priceSeparator: {
+    opacity: 0.55,
+    fontWeight: 500,
+  },
+
+  priceText: {
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
   },
 
   details: {
@@ -124,6 +139,15 @@ type Props = {
   availability: string | null | undefined
   catColors?: string[]
   catDetails?: string
+  catPrice?: number | null
+}
+
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(price)
 }
 
 const CatCard = ({
@@ -134,6 +158,7 @@ const CatCard = ({
   availability,
   catColors,
   catDetails,
+  catPrice,
 }: Props) => {
   const { classes, cx } = useStyles()
   const theme = useTheme()
@@ -146,6 +171,14 @@ const CatCard = ({
 
   const isReserved = normalizedAvailability === 'reserve'
   const isAvailable = normalizedAvailability === 'disponible'
+  const isAdopted = normalizedAvailability === 'adopte'
+
+  const shouldDisplayPrice =
+    !isAdopted &&
+    catPrice !== null &&
+    catPrice !== undefined &&
+    Number.isFinite(catPrice) &&
+    catPrice >= 0
 
   const statusLabel = isReserved ? 'Réservé ❤️' : isAvailable ? 'Disponible' : availability
 
@@ -175,6 +208,7 @@ const CatCard = ({
         <Box className={classes.footer}>
           <Box className={classes.topLine}>
             <Typography className={classes.name}>{catName ?? 'Sans nom'}</Typography>
+
             {!!catSex && <Typography className={classes.sexPill}>{catSex}</Typography>}
           </Box>
 
@@ -191,7 +225,15 @@ const CatCard = ({
                 !isReserved && !isAvailable && classes.defaultBanner
               )}
             >
-              {statusLabel}
+              <span>{statusLabel}</span>
+
+              {shouldDisplayPrice && (
+                <>
+                  <span className={classes.priceSeparator}>•</span>
+
+                  <span className={classes.priceText}>{formatPrice(catPrice)}</span>
+                </>
+              )}
             </Box>
           )}
 
