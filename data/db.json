@@ -180,6 +180,43 @@
       "pictures": [
         "https://res.cloudinary.com/djp6audpi/image/upload/v1780756433/salameche-1_vu2jgc.jpg"
       ]
+    },
+    {
+      "id": "c5c21271-7f32-44e8-9b86-056afff994b6",
+      "name": "Blacky",
+      "slug": "blacky",
+      "dateOfBirth": "2026-06-24",
+      "sex": "Male",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black Smoke"
+      ],
+      "details": "Né de la portée Attila et Salamèche",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1784370561/Blacky1_m565ac.jpg"
+      ]
+    },
+    {
+      "id": "bfd16d8e-a0ab-46a9-9353-3bc305456fa2",
+      "name": "Black Jack",
+      "slug": "black-jack",
+      "dateOfBirth": "2026-06-24",
+      "sex": "Male",
+      "type": "kitten",
+      "availability": "Disponible",
+      "vaccines": [],
+      "chip": null,
+      "colors": [
+        "Black silver blotched tabby"
+      ],
+      "details": "Né de la portée Attila et Salamèche",
+      "pictures": [
+        "https://res.cloudinary.com/djp6audpi/image/upload/v1784370561/BlackJack1_pgmelg.jpg"
+      ]
     }
-  ]
+  ],
+  "upcomingBirth": null
 }
