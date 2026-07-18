@@ -10,12 +10,20 @@ import { getCatSlug } from '../lib/cat'
 
 interface HomePageProps {
   kittens: Cat[]
+  recentlyAdoptedKittens: Cat[]
   featuredBreeders: Cat[]
   adoptedCount: number
 }
 
+type CatWithDates = Cat & {
+  createdAt?: string
+  dateOfBirth?: string
+  dob?: string
+}
+
 const sexLabel = (sex: Cat['sex']) => {
   if (sex === 'Male') return 'Mâle'
+
   return 'Femelle'
 }
 
@@ -23,7 +31,28 @@ const getCatImage = (cat: Cat) => {
   return cat.pictures?.[0] || '/images/placeholder-cat.jpg'
 }
 
-const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) => {
+const getCatTimestamp = (cat: Cat) => {
+  const catWithDates = cat as CatWithDates
+
+  const date = catWithDates.createdAt || catWithDates.dateOfBirth || catWithDates.dob
+
+  if (!date) return 0
+
+  const timestamp = new Date(date).getTime()
+
+  return Number.isNaN(timestamp) ? 0 : timestamp
+}
+
+const sortByNewest = (firstCat: Cat, secondCat: Cat) => {
+  return getCatTimestamp(secondCat) - getCatTimestamp(firstCat)
+}
+
+const HomePage = ({
+  kittens,
+  recentlyAdoptedKittens,
+  featuredBreeders,
+  adoptedCount,
+}: HomePageProps) => {
   return (
     <>
       <Seo
@@ -74,7 +103,12 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
           <Typography
             variant="body1"
             color="text.secondary"
-            sx={{ maxWidth: 760, mx: 'auto', lineHeight: 1.8, mb: 4 }}
+            sx={{
+              maxWidth: 760,
+              mx: 'auto',
+              lineHeight: 1.8,
+              mb: 4,
+            }}
           >
             Des Loulou Coon&apos;s est un élevage familial situé à Arthenac, en Charente-Maritime.
             Nous partageons ici nos chatons, nos reproducteurs et notre passion pour le Maine Coon.
@@ -82,7 +116,15 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
 
           <PetsIcon sx={{ fontSize: 40, color: '#f50057' }} />
 
-          <Typography variant="h2" component="p" sx={{ fontSize: '1.2rem', mt: 1 }} gutterBottom>
+          <Typography
+            variant="h2"
+            component="p"
+            sx={{
+              fontSize: '1.2rem',
+              mt: 1,
+            }}
+            gutterBottom
+          >
             Chatons ayant trouvé une famille à nos côtés
           </Typography>
 
@@ -125,25 +167,71 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
             gutterBottom
             sx={{ textAlign: { xs: 'center', sm: 'left' } }}
           >
-            Derniers chatons présentés
+            Nos chatons actuellement présentés
           </Typography>
 
-          <Grid container spacing={4}>
-            {kittens.map(kitten => (
-              <Grid item xs={12} sm={6} md={4} key={kitten.id}>
-                <CatCard
-                  catName={kitten.name}
-                  catImage={getCatImage(kitten)}
-                  catSex={sexLabel(kitten.sex)}
-                  catLink={`/chats/${getCatSlug(kitten)}`}
-                  availability={kitten.availability}
-                  catColors={kitten.colors}
-                  catDetails={kitten.details}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          {kittens.length > 0 ? (
+            <Grid container spacing={4}>
+              {kittens.map(kitten => (
+                <Grid item xs={12} sm={6} md={4} key={kitten.id}>
+                  <CatCard
+                    catName={kitten.name}
+                    catImage={getCatImage(kitten)}
+                    catSex={sexLabel(kitten.sex)}
+                    catLink={`/chats/${getCatSlug(kitten)}`}
+                    availability={kitten.availability}
+                    catColors={kitten.colors}
+                    catDetails={kitten.details}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Typography color="text.secondary" sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+              Aucun chaton n&apos;est actuellement présenté.
+            </Typography>
+          )}
         </Box>
+
+        {recentlyAdoptedKittens.length > 0 && (
+          <Box my={6}>
+            <Typography
+              variant="h4"
+              component="h2"
+              gutterBottom
+              sx={{ textAlign: { xs: 'center', sm: 'left' } }}
+            >
+              Ils ont récemment trouvé leur famille
+            </Typography>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{
+                mb: 3,
+                textAlign: { xs: 'center', sm: 'left' },
+              }}
+            >
+              Quelques-uns des derniers chatons ayant rejoint leur nouvelle famille.
+            </Typography>
+
+            <Grid container spacing={4}>
+              {recentlyAdoptedKittens.map(kitten => (
+                <Grid item xs={12} sm={6} md={4} key={kitten.id}>
+                  <CatCard
+                    catName={kitten.name}
+                    catImage={getCatImage(kitten)}
+                    catSex={sexLabel(kitten.sex)}
+                    catLink={`/chats/${getCatSlug(kitten)}`}
+                    availability={kitten.availability}
+                    catColors={kitten.colors}
+                    catDetails={kitten.details}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
       </Container>
     </>
   )
@@ -151,15 +239,41 @@ const HomePage = ({ kittens, featuredBreeders, adoptedCount }: HomePageProps) =>
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   try {
-    const kittens = await getKittens()
+    const allKittens = await getKittens()
     const breeders = await getBreeders()
     const adoptedCount = await countAdoptedCats()
 
-    const featuredBreeders = breeders.slice(0, 2)
+    const availabilityPriority: Record<string, number> = {
+      Disponible: 0,
+      Réservé: 1,
+    }
+
+    const kittens = allKittens
+      .filter(kitten => kitten.availability !== 'Adopté')
+      .sort((firstKitten, secondKitten) => {
+        const firstPriority = availabilityPriority[firstKitten.availability || 'Disponible'] ?? 99
+
+        const secondPriority = availabilityPriority[secondKitten.availability || 'Disponible'] ?? 99
+
+        if (firstPriority !== secondPriority) {
+          return firstPriority - secondPriority
+        }
+
+        return sortByNewest(firstKitten, secondKitten)
+      })
+      .slice(0, 6)
+
+    const recentlyAdoptedKittens = allKittens
+      .filter(kitten => kitten.availability === 'Adopté')
+      .sort(sortByNewest)
+      .slice(0, 3)
+
+    const featuredBreeders = [...breeders].sort(sortByNewest).slice(0, 2)
 
     return {
       props: {
         kittens,
+        recentlyAdoptedKittens,
         featuredBreeders,
         adoptedCount,
       },
@@ -170,6 +284,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     return {
       props: {
         kittens: [],
+        recentlyAdoptedKittens: [],
         featuredBreeders: [],
         adoptedCount: 61,
       },
